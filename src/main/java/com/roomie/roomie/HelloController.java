@@ -1,4 +1,4 @@
-package com.buddyup.buddyup;
+package com.roomie.roomie;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
