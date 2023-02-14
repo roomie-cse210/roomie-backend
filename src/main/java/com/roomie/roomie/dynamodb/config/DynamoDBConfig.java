@@ -1,4 +1,4 @@
-package com.roomie.roomie.data.dynamodb.config;
+package com.roomie.roomie.dynamodb.config;
 
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+// import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -27,8 +27,8 @@ public class DynamoDBConfig {
     @Value("${amazon.aws.secretkey}")
     private String amazonAWSSecretKey;
     
-    @Autowired
-    private ApplicationContext context;
+    // @Autowired
+    // private ApplicationContext context;
 
     @Bean
     public AmazonDynamoDB amazonDynamoDB() {
@@ -44,8 +44,8 @@ public class DynamoDBConfig {
         return new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey);
     }
 
-    @Bean(name = "mvcHandlerMappingIntrospectorCustom")
-	public HandlerMappingIntrospector mvcHandlerMappingIntrospectorCustom() {
-		return new HandlerMappingIntrospector(context);
-	}
+    // @Bean(name = "mvcHandlerMappingIntrospectorCustom")
+	// public HandlerMappingIntrospector mvcHandlerMappingIntrospectorCustom() {
+	// 	return new HandlerMappingIntrospector(context);
+	// }
 }
