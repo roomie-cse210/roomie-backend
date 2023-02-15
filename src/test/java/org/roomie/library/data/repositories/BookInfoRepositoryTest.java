@@ -1,3 +1,4 @@
+package org.roomie.library.data.repositories;
 // package org.hillmerch.library.data.repositories;
 
 // import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
