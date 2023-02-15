@@ -68,4 +68,22 @@ public class RoomieController {
 			return ResponseEntity.ok("user updated");
 		}
 	}
+
+	@GetMapping("/")
+	public ResponseEntity<String> dummy() {
+		StringBuilder sb = new StringBuilder();
+		logger.info("Checking whether user is registered");
+    	userInfoRepository.findAll().forEach(sb::append);
+		return ResponseEntity.ok(sb.toString());
+		// logger.info("Checking whether user is registered");
+		// var val = userInfoRepository.findById(userInfo.getUsername());
+		// if (!val.isPresent()) {
+		// 	logger.info("User {} is not registered", userInfo.getUsername());
+		// 	return ResponseEntity.ok("user not registered");
+		// } else {
+		// 	var uinfo = userInfoRepository.save(userInfo);
+		// 	logger.info("Updated user {} successfully", uinfo.getUsername());
+		// 	return ResponseEntity.ok("user updated");
+		// }
+	}
 }
