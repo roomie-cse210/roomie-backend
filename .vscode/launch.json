@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<springboot-dynamodb>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.roomie.library.Application",
+            "projectName": "springboot-dynamodb",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

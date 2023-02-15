@@ -1,0 +1,5 @@
+org/roomie/library/data/config/DynamoDBConfig.class
+org/roomie/library/Application.class
+org/roomie/library/web/RoomieController.class
+org/roomie/library/data/repositories/UserInfoRepository.class
+org/roomie/library/data/model/UserInfo.class
