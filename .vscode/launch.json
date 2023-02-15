@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-RoomieApplication<roomie>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.roomie.roomie.RoomieApplication",
+            "projectName": "roomie",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
