@@ -10,7 +10,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 public class UserInfo {
 	private String username;
 	private String password;
-
 	public UserInfo() {
 	}
 

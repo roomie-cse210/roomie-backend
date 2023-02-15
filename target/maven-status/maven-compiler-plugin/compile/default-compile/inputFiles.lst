@@ -1,0 +1,5 @@
+/home/harsh/UCSD/Winter 2023/CSE210/roomie-backend/src/main/java/org/roomie/library/data/config/DynamoDBConfig.java
+/home/harsh/UCSD/Winter 2023/CSE210/roomie-backend/src/main/java/org/roomie/library/data/model/UserInfo.java
+/home/harsh/UCSD/Winter 2023/CSE210/roomie-backend/src/main/java/org/roomie/library/data/repositories/UserInfoRepository.java
+/home/harsh/UCSD/Winter 2023/CSE210/roomie-backend/src/main/java/org/roomie/library/Application.java
+/home/harsh/UCSD/Winter 2023/CSE210/roomie-backend/src/main/java/org/roomie/library/web/RoomieController.java
