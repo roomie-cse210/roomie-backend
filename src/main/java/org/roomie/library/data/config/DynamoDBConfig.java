@@ -12,7 +12,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 
 @Configuration
-@EnableDynamoDBRepositories(basePackages = "org.hillmerch.library.data.repositories")
+@EnableDynamoDBRepositories(basePackages = "org.roomie.library.data.repositories")
 public class DynamoDBConfig {
 
 

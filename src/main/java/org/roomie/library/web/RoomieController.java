@@ -35,11 +35,11 @@ public class RoomieController {
 		return "Welcome to Roomie.com";
 	}
 
-	@PostMapping("/books")
-	public UserInfo newBookInfo(@RequestBody UserInfo bookInfo) {
-		logger.info("Adding the book " + bookInfo);
-		return userInfoRepository.save( bookInfo );
-	}
+	// @PostMapping("/books")
+	// public UserInfo newBookInfo(@RequestBody UserInfo bookInfo) {
+	// 	logger.info("Adding the book " + bookInfo);
+	// 	return userInfoRepository.save( bookInfo );
+	// }
 
 	// @GetMapping("/books/{id}")
 	// @ResponseBody
@@ -48,12 +48,12 @@ public class RoomieController {
 	// 	return userInfoRepository.findById(id);
 	// 			// .orElseThrow(() -> new BookInfoNotFoundException( id));
 	// }
-	@GetMapping("/users")
-	@ResponseBody
-	public Collection<UserInfo> allBookInfos() {
-		logger.info("Searching all users");
-		return StreamSupport.stream( userInfoRepository.findAll().spliterator(), false)
-				.collect( Collectors.toList());
+	// @GetMapping("/users")
+	// @ResponseBody
+	// public Collection<UserInfo> allBookInfos() {
+	// 	logger.info("Searching all users");
+	// 	return StreamSupport.stream( userInfoRepository.findAll().spliterator(), false)
+	// 			.collect( Collectors.toList());
 
-	}
+	// }
 }
