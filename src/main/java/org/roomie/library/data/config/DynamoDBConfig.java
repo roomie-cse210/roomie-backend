@@ -37,5 +37,4 @@ public class DynamoDBConfig {
 				.build();
 		return amazonDynamoDB;
 	}
-
 }
