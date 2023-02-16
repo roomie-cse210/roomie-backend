@@ -10,3 +10,4 @@ target/classes/org/roomie/library/web/RoomieController.class
 target/classes/static/index.html
 target/test-classes/application.properties
 target/test-classes/org/roomie/library/ApplicationTest.class
+target/classes/org/roomie/library/data/services/EmailSenderService.class
