@@ -25,7 +25,7 @@ public class RoomieController {
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) {
 		logger.info("Checking login credentials");
-		var val = userInfoRepository.findById(userInfo.getUsername());
+		var val = userInfoRepository.findById(userInfo.getEmail());
 		if (val.isPresent()) {
 			var uinfo = val.get();
 			if(uinfo.getPassword().equals(userInfo.getPassword())){
@@ -36,7 +36,7 @@ public class RoomieController {
 				return ResponseEntity.ok("incorrect password");
 			}
 		} else {
-			logger.info("No user found with username {}", userInfo.getUsername());
+			logger.info("No user found with username {}", userInfo.getEmail());
 			return ResponseEntity.ok("user not found");
 		}
 	}
@@ -44,13 +44,13 @@ public class RoomieController {
 	@PostMapping("/createUser")
 	public ResponseEntity<String> createUser(@RequestBody UserInfo userInfo) {
 		logger.info("Checking whether user is already registered");
-		var val = userInfoRepository.findById(userInfo.getUsername());
+		var val = userInfoRepository.findById(userInfo.getEmail());
 		if (val.isPresent()) {
-			logger.info("User {} is already registered", userInfo.getUsername());
+			logger.info("User {} is already registered", userInfo.getEmail());
 			return ResponseEntity.ok("user already registered");
 		} else {
 			var uinfo = userInfoRepository.save(userInfo);
-			logger.info("Created user {} successfully", uinfo.getUsername());
+			logger.info("Created user {} successfully", uinfo.getEmail());
 			return ResponseEntity.ok("user created");
 		}
 	}
@@ -58,14 +58,21 @@ public class RoomieController {
 	@PostMapping("/updateUser")
 	public ResponseEntity<String> updateUser(@RequestBody UserInfo userInfo) {
 		logger.info("Checking whether user is registered");
-		var val = userInfoRepository.findById(userInfo.getUsername());
+		var val = userInfoRepository.findById(userInfo.getEmail());
 		if (!val.isPresent()) {
-			logger.info("User {} is not registered", userInfo.getUsername());
+			logger.info("User {} is not registered", userInfo.getEmail());
 			return ResponseEntity.ok("user not registered");
 		} else {
 			var uinfo = userInfoRepository.save(userInfo);
-			logger.info("Updated user {} successfully", uinfo.getUsername());
+			logger.info("Updated user {} successfully", uinfo.getEmail());
 			return ResponseEntity.ok("user updated");
 		}
+	}
+
+	@GetMapping("/")
+	public ResponseEntity<String> getAllUsers() {
+		StringBuilder sb = new StringBuilder();
+    	userInfoRepository.findAll().forEach(sb::append);
+		return ResponseEntity.ok(sb.toString());
 	}
 }

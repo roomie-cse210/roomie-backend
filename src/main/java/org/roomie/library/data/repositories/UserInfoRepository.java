@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 
 @EnableScan
 public interface UserInfoRepository  extends CrudRepository<UserInfo, String> {
-	Optional<UserInfo> findById(String username);
+	Optional<UserInfo> findById(String email);
 }

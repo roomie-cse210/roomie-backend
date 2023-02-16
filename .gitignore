@@ -1,0 +1,12 @@
+target/classes/.DS_Store
+target/classes/application.properties
+target/classes/org/.DS_Store
+target/classes/org/roomie/.DS_Store
+target/classes/org/roomie/library/Application.class
+target/classes/org/roomie/library/data/config/DynamoDBConfig.class
+target/classes/org/roomie/library/data/model/UserInfo.class
+target/classes/org/roomie/library/data/repositories/UserInfoRepository.class
+target/classes/org/roomie/library/web/RoomieController.class
+target/classes/static/index.html
+target/test-classes/application.properties
+target/test-classes/org/roomie/library/ApplicationTest.class
