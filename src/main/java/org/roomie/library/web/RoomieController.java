@@ -30,14 +30,14 @@ public class RoomieController {
 			var uinfo = val.get();
 			if(uinfo.getPassword().equals(userInfo.getPassword())){
 				logger.info("Login Successful");
-				return ResponseEntity.ok("login successful");
+				return ResponseEntity.status(200).body("login successful");
 			} else{
 				logger.info("Login Failed Due to Incorrect Password.");
-				return ResponseEntity.ok("incorrect password");
+				return ResponseEntity.status(401).body("incorrect password");
 			}
 		} else {
 			logger.info("No user found with username {}", userInfo.getEmail());
-			return ResponseEntity.ok("user not found");
+			return ResponseEntity.status(419).body("user not found");
 		}
 	}
 
@@ -47,11 +47,11 @@ public class RoomieController {
 		var val = userInfoRepository.findById(userInfo.getEmail());
 		if (val.isPresent()) {
 			logger.info("User {} is already registered", userInfo.getEmail());
-			return ResponseEntity.ok("user already registered");
+			return ResponseEntity.status(420).body("user already registered");
 		} else {
 			var uinfo = userInfoRepository.save(userInfo);
 			logger.info("Created user {} successfully", uinfo.getEmail());
-			return ResponseEntity.ok("user created");
+			return ResponseEntity.status(200).body("user created");
 		}
 	}
 
@@ -61,11 +61,11 @@ public class RoomieController {
 		var val = userInfoRepository.findById(userInfo.getEmail());
 		if (!val.isPresent()) {
 			logger.info("User {} is not registered", userInfo.getEmail());
-			return ResponseEntity.ok("user not registered");
+			return ResponseEntity.status(419).body("user not registered");
 		} else {
 			var uinfo = userInfoRepository.save(userInfo);
 			logger.info("Updated user {} successfully", uinfo.getEmail());
-			return ResponseEntity.ok("user updated");
+			return ResponseEntity.status(200).body("user updated");
 		}
 	}
 
