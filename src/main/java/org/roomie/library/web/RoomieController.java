@@ -36,48 +36,60 @@ public class RoomieController {
 
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) {
-		logger.info("Checking login credentials");
-		var val = userInfoRepository.findById(userInfo.getEmail());
-		if (val.isPresent()) {
-			var uinfo = val.get();
-			if(uinfo.getPassword().equals(userInfo.getPassword())){
-				logger.info("Login Successful");
-				return ResponseEntity.status(200).body("login successful");
-			} else{
-				logger.info("Login Failed Due to Incorrect Password.");
-				return ResponseEntity.status(401).body("incorrect password");
+		try{
+			logger.info("Checking login credentials");
+			var val = userInfoRepository.findById(userInfo.getEmail());
+			if (val.isPresent()) {
+				var uinfo = val.get();
+				if(uinfo.getPassword().equals(userInfo.getPassword())){
+					logger.info("Login Successful");
+					return ResponseEntity.status(200).body("login successful");
+				} else{
+					logger.info("Login Failed Due to Incorrect Password.");
+					return ResponseEntity.status(401).body("incorrect password");
+				}
+			} else {
+				logger.info("No user found with username {}", userInfo.getEmail());
+				return ResponseEntity.status(419).body("user not found");
 			}
-		} else {
-			logger.info("No user found with username {}", userInfo.getEmail());
-			return ResponseEntity.status(419).body("user not found");
+		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
 
 	@PostMapping("/createUser")
 	public ResponseEntity<String> createUser(@RequestBody UserInfo userInfo) {
-		logger.info("Checking whether email is already registered");
-		var val = userInfoRepository.findById(userInfo.getEmail());
-		if (val.isPresent()) {
-			logger.info("User {} is already registered", userInfo.getEmail());
-			return ResponseEntity.status(420).body("user already registered");
-		} else {
-			var uinfo = userInfoRepository.save(userInfo);
-			logger.info("Created user {} successfully", uinfo.getEmail());
-			return ResponseEntity.status(200).body("user created");
+		try{
+			logger.info("Checking whether email is already registered");
+			var val = userInfoRepository.findById(userInfo.getEmail());
+			if (val.isPresent()) {
+				logger.info("User {} is already registered", userInfo.getEmail());
+				return ResponseEntity.status(420).body("user already registered");
+			} else {
+				var uinfo = userInfoRepository.save(userInfo);
+				logger.info("Created user {} successfully", uinfo.getEmail());
+				return ResponseEntity.status(200).body("user created");
+			}
+		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
 
 	@PostMapping("/updateUser")
 	public ResponseEntity<String> updateUser(@RequestBody UserInfo userInfo) {
-		logger.info("Checking whether email is registered");
-		var val = userInfoRepository.findById(userInfo.getEmail());
-		if (!val.isPresent()) {
-			logger.info("User {} is not registered", userInfo.getEmail());
-			return ResponseEntity.status(419).body("user not registered");
-		} else {
-			var uinfo = userInfoRepository.save(userInfo);
-			logger.info("Updated user {} password to {}", uinfo.getEmail(), uinfo.getPassword());
-			return ResponseEntity.status(200).body("user updated");
+		try{
+			logger.info("Checking whether email is registered");
+			var val = userInfoRepository.findById(userInfo.getEmail());
+			if (!val.isPresent()) {
+				logger.info("User {} is not registered", userInfo.getEmail());
+				return ResponseEntity.status(419).body("user not registered");
+			} else {
+				var uinfo = userInfoRepository.save(userInfo);
+				logger.info("Updated user {} password to {}", uinfo.getEmail(), uinfo.getPassword());
+				return ResponseEntity.status(200).body("user updated");
+			}
+		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
 
