@@ -125,10 +125,16 @@ public class RoomieController {
 	@PostMapping("/emailOTP")
 	public ResponseEntity<String> emailOTP(@RequestHeader(value="email") String email) {
 		try{
-				String OTP = generateRandomOTP();
-				emailSenderService.sendOTPEmail(email, OTP);
-				logger.info("Sent OTP {} to {}", OTP, email);
-				return ResponseEntity.status(200).body(OTP);
+			logger.info("Checking whether email is already registered");
+			var val = userInfoRepository.findById(email);
+			if (val.isPresent()) {
+				logger.info("User {} is already registered", email);
+				return ResponseEntity.status(420).body("user already registered");
+			}
+			String OTP = generateRandomOTP();
+			emailSenderService.sendOTPEmail(email, OTP);
+			logger.info("Sent OTP {} to {}", OTP, email);
+			return ResponseEntity.status(200).body(OTP);
 		} catch(Exception e){
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
