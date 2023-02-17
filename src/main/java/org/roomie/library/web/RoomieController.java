@@ -108,7 +108,7 @@ public class RoomieController {
 				logger.info("Generated random password {}", randomPassword);
 
 				// send email to user sharing random password
-				emailSenderService.sendSimpleEmail(email, randomPassword);
+				emailSenderService.sendResetPasswordEmail(email, randomPassword);
 
 				// update the DB to use random password for user
 				UserInfo userInfo = new UserInfo(email);
@@ -118,6 +118,23 @@ public class RoomieController {
 				logger.info("Updated user {} password to {}", uinfo.getEmail(), randomPassword);
 				return ResponseEntity.status(200).body("user updated");
 			}
+		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+	@PostMapping("/emailOTP")
+	public ResponseEntity<String> emailOTP(@RequestHeader(value="email") String email) {
+		try{
+			logger.info("Checking whether email is already registered");
+			var val = userInfoRepository.findById(email);
+			if (val.isPresent()) {
+				logger.info("User {} is already registered", email);
+				return ResponseEntity.status(420).body("user already registered");
+			}
+			String OTP = generateRandomOTP();
+			emailSenderService.sendOTPEmail(email, OTP);
+			logger.info("Sent OTP {} to {}", OTP, email);
+			return ResponseEntity.status(200).body(OTP);
 		} catch(Exception e){
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
@@ -136,6 +153,13 @@ public class RoomieController {
     
         PasswordGenerator generator = new PasswordGenerator();
         String password = generator.generatePassword(8, rules);
+        return password;
+    }
+	static String generateRandomOTP() {
+        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
+    
+        PasswordGenerator generator = new PasswordGenerator();
+        String password = generator.generatePassword(5, rules);
         return password;
     }
 }
