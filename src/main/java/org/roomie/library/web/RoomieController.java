@@ -103,20 +103,10 @@ public class RoomieController {
 				logger.info("User {} is not registered", email);
 				return ResponseEntity.status(419).body("user not registered");
 			} else {
-				// generate random password
-				String randomPassword = generateRandomPassword();
-				logger.info("Generated random password {}", randomPassword);
-
-				// send email to user sharing random password
-				emailSenderService.sendResetPasswordEmail(email, randomPassword);
-
-				// update the DB to use random password for user
-				UserInfo userInfo = new UserInfo(email);
-				userInfo.setPassword(randomPassword);
-				var uinfo = userInfoRepository.save(userInfo);
-
-				logger.info("Updated user {} password to {}", uinfo.getEmail(), randomPassword);
-				return ResponseEntity.status(200).body("user updated");
+				String OTP = generateRandomOTP();
+				emailSenderService.sendForgotPasswordOTPEmail(email, OTP);
+				logger.info("Sent Forgot Password Code {} to {}", OTP, email);
+				return ResponseEntity.status(200).body(OTP);
 			}
 		} catch(Exception e){
 			return ResponseEntity.status(500).body("Internal Server Error");
@@ -132,8 +122,8 @@ public class RoomieController {
 				return ResponseEntity.status(420).body("user already registered");
 			}
 			String OTP = generateRandomOTP();
-			emailSenderService.sendOTPEmail(email, OTP);
-			logger.info("Sent OTP {} to {}", OTP, email);
+			emailSenderService.sendSignupOTPEmail(email, OTP);
+			logger.info("Sent Signup Code {} to {}", OTP, email);
 			return ResponseEntity.status(200).body(OTP);
 		} catch(Exception e){
 			return ResponseEntity.status(500).body("Internal Server Error");
@@ -146,15 +136,6 @@ public class RoomieController {
     	userInfoRepository.findAll().forEach(sb::append);
 		return ResponseEntity.ok(sb.toString());
 	}
-
-	static String generateRandomPassword() {
-        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.UpperCase, 1),
-                new CharacterRule(EnglishCharacterData.LowerCase, 1), new CharacterRule(EnglishCharacterData.Digit, 1));
-    
-        PasswordGenerator generator = new PasswordGenerator();
-        String password = generator.generatePassword(8, rules);
-        return password;
-    }
 	static String generateRandomOTP() {
         List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
     

@@ -15,32 +15,29 @@ public class EmailSenderService {
 
     private static final Logger logger = LoggerFactory.getLogger( EmailSenderService.class);
 
-    public String getResetPasswordBody(String newpassword){
-        return "Hey!! \n\nYour Roomie password has been reset to \"" + newpassword + "\". Kindly use it to login. \n\nRegards, \nTeam Roomie";
+    public String getEmailSignupOTPBody(String OTP){
+        return "Hey!! \n\n Code to validate your roomie registration is \"" + OTP + "\". Kindly use it to validate your registration request. \n\nRegards, \nTeam Roomie";
     }
-    public String getEmailOTPBody(String OTP){
-        return "Hey!! \n\n OTP to validate your roomie registration is \"" + OTP + "\". Kindly use it to validate your registration. \n\nRegards, \nTeam Roomie";
+    public String getEmailForgotPasswordOTPBody(String OTP){
+        return "Hey!! \n\n Code to validate your roomie password reset request is \"" + OTP + "\". Kindly use it to validate your password reset request. \n\nRegards, \nTeam Roomie";
     }
-
-    public void sendResetPasswordEmail(String toEmail,
-                                String newpassword) {
-        
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setText(getResetPasswordBody(newpassword));
-        message.setSubject("Password reset for Roomie");
-        mailSender.send(message);
-        logger.info("Reset password email sent to: " + toEmail);
-    }
-
-    public void sendOTPEmail(String toEmail,
+    public void sendSignupOTPEmail(String toEmail,
                                 String OTP) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
-        message.setText(getEmailOTPBody(OTP));
-        message.setSubject("OTP for Roomie Registration");
+        message.setText(getEmailSignupOTPBody(OTP));
+        message.setSubject("Code for Roomie Registration");
         mailSender.send(message);
-        logger.info("OTP email sent to: " + toEmail);
+        logger.info("Code email sent to: " + toEmail);
+    }
+    public void sendForgotPasswordOTPEmail(String toEmail,
+                                String OTP) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setText(getEmailForgotPasswordOTPBody(OTP));
+        message.setSubject("Code for Roomie Password Reset");
+        mailSender.send(message);
+        logger.info("Code email sent to: " + toEmail);
     }
 
     
