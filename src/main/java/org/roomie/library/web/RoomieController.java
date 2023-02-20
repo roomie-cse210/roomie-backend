@@ -2,6 +2,7 @@ package org.roomie.library.web;
 import org.roomie.library.data.model.UserInfo;
 import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.services.EmailSenderService;
+import org.roomie.library.data.services.SecureKeysService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,12 @@ public class RoomieController {
 	@Autowired
 	private EmailSenderService emailSenderService;
 
+	@Autowired
+	private SecureKeysService secureKeysService;
+
 	@PostMapping("/verifyUser")
-	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) {
+	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) throws Exception {
+		userInfo = EncryptPassword(userInfo);
 		try{
 			logger.info("Checking login credentials");
 			var val = userInfoRepository.findById(userInfo.getEmail());
@@ -58,7 +63,8 @@ public class RoomieController {
 	}
 
 	@PostMapping("/createUser")
-	public ResponseEntity<String> createUser(@RequestBody UserInfo userInfo) {
+	public ResponseEntity<String> createUser(@RequestBody UserInfo userInfo) throws Exception {
+		userInfo = EncryptPassword(userInfo);
 		try{
 			logger.info("Checking whether email is already registered");
 			var val = userInfoRepository.findById(userInfo.getEmail());
@@ -76,7 +82,8 @@ public class RoomieController {
 	}
 
 	@PostMapping("/updateUser")
-	public ResponseEntity<String> updateUser(@RequestBody UserInfo userInfo) {
+	public ResponseEntity<String> updateUser(@RequestBody UserInfo userInfo) throws Exception {
+		userInfo = EncryptPassword(userInfo);
 		try{
 			logger.info("Checking whether email is registered");
 			var val = userInfoRepository.findById(userInfo.getEmail());
@@ -143,4 +150,10 @@ public class RoomieController {
         String password = generator.generatePassword(5, rules);
         return password;
     }
+
+	private UserInfo EncryptPassword(UserInfo userInfo) throws Exception {
+		String currentPass = userInfo.getPassword();
+		userInfo.setPassword(secureKeysService.EncryptString(currentPass));
+		return userInfo;
+	}
 }
