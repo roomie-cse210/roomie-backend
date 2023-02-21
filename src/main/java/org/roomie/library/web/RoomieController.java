@@ -169,8 +169,8 @@ public class RoomieController {
 				logger.info("roomie profile {} is already created", roomieProfile.getEmail());
 				return ResponseEntity.status(420).body("roomie profile already created");
 			} else {
-				var uinfo = roomieProfileRespository.save(roomieProfile);
-				logger.info("Created user {} successfully", uinfo.getEmail());
+				var roomieinfo = roomieProfileRespository.save(roomieProfile);
+				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
 				return ResponseEntity.status(200).body("roomie profile created");
 			}
 		} catch(Exception e){
