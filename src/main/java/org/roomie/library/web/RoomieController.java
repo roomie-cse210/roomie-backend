@@ -166,8 +166,9 @@ public class RoomieController {
 			logger.info("Checking whether email is already registered");
 			var val = roomieProfileRespository.findById(roomieProfile.getEmail());
 			if (val.isPresent()) {
-				logger.info("roomie profile {} is already created", roomieProfile.getEmail());
-				return ResponseEntity.status(420).body("roomie profile already created");
+				roomieProfileRespository.save(roomieProfile);
+				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
+				return ResponseEntity.status(200).body("roomie profile updated");
 			} else {
 				var roomieinfo = roomieProfileRespository.save(roomieProfile);
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
