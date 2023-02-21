@@ -46,7 +46,7 @@ public class RoomieProfile {
 	}
 
 	public void setGender(String gender) {
-		this.gender = name;
+		this.gender = gender;
 	}
 
     public Integer getAge() {

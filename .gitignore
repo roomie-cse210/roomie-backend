@@ -12,3 +12,4 @@ target/test-classes/application.properties
 target/test-classes/org/roomie/library/ApplicationTest.class
 target/classes/org/roomie/library/data/services/EmailSenderService.class
 target/classes/org/roomie/library/data/services/SecureKeysService.class
+target/classes/org/roomie/library/data/model/RoomieProfile.class
