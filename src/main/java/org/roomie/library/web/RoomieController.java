@@ -1,10 +1,12 @@
 package org.roomie.library.web;
 import org.roomie.library.data.model.RoomieProfile;
+import org.roomie.library.data.model.RoomieProfileFilterRequest;
 import org.roomie.library.data.model.UserInfo;
 import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
+import org.roomie.library.data.services.DynamoDbRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;  
-import java.io.IOException;  
-
 
 @CrossOrigin
 @RestController
@@ -45,6 +44,9 @@ public class RoomieController {
 
 	@Autowired
 	private SecureKeysService secureKeysService;
+
+	@Autowired
+	private DynamoDbRequestService dynamoDbRequestService;
 
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) throws Exception {
@@ -165,6 +167,20 @@ public class RoomieController {
 		} 
 	}
 
+	@GetMapping("/getRoomieProfilesBasedOnFilters")
+	public ResponseEntity<List<String>> getRoomieProfilesBasedOnFilters(@RequestBody RoomieProfileFilterRequest roomieProfileFilterRequest) {
+		List<String> jsonStr = new ArrayList<String>();
+		try{
+			jsonStr = dynamoDbRequestService.getFilteredRecords(roomieProfileFilterRequest);
+			return ResponseEntity.status(200).body(jsonStr);
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
+			jsonStr.add("Internal Server Error");
+			return ResponseEntity.status(500).body(jsonStr);
+		}
+	}
+
 	@PostMapping("/sendEmailInvite")
 	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value="requesterEmail") String requesterEmail, @RequestHeader(value="receiverEmail") String receiverEmail) {
 		try{
@@ -182,24 +198,13 @@ public class RoomieController {
 		}
 	}
 
-	@GetMapping("/getRoomieProfilesBasedOnFilters")
-	public ResponseEntity<String> getRoomieProfilesBasedOnFilters(@RequestHeader(value="gender") String gender) {
-		try{
-			var val = roomieProfileRespository.findByGender(gender);
-			String jsonStr = convertJavaObjectToJSON(val.get());
-			return ResponseEntity.status(200).body(jsonStr); 
-		} catch(Exception e){
-			logger.info("error:",e);
-			return ResponseEntity.status(500).body("Internal Server Error");
-		}
-	}
-
 	@GetMapping("/")
 	public ResponseEntity<String> getAllUsers() {
 		StringBuilder sb = new StringBuilder();
     	userInfoRepository.findAll().forEach(sb::append);
 		return ResponseEntity.ok(sb.toString());
 	}
+	
 	static String generateRandomOTP() {
         List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
     
@@ -213,9 +218,5 @@ public class RoomieController {
 		userInfo.setPassword(secureKeysService.EncryptString(currentPass));
 		return userInfo;
 	}
-
-	private String convertJavaObjectToJSON(Object obj) throws Exception {
-		ObjectMapper Obj = new ObjectMapper();  
-		return  Obj.writeValueAsString(obj); 
-	}
+	
 }

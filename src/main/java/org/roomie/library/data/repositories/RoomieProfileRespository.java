@@ -1,6 +1,6 @@
 package org.roomie.library.data.repositories;
 
-import java.util.Optional;
+import java.util.*;
 
 import org.roomie.library.data.model.RoomieProfile;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
@@ -10,5 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface RoomieProfileRespository extends CrudRepository<RoomieProfile, String> {
     Optional<RoomieProfile> findById(String email);
 
-    Optional<RoomieProfile> findByGender(String gender);
+    Optional<List<RoomieProfile>> findByGenderAndAgeAndNationalityAndOccupationAndMinBudgetAndMaxBudgetAndSmokingAndPetsAndFoodAndRiserAndSleepAndIsPrivate(
+                                                String gender,Integer age, String nationality, String occupation,Integer minBudget,
+                                                Integer maxBudget,String smoking,String pets, String food,String riser,String sleep, String isPrivate );
 }
