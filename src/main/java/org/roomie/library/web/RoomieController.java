@@ -145,26 +145,6 @@ public class RoomieController {
 		}
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<String> getAllUsers() {
-		StringBuilder sb = new StringBuilder();
-    	userInfoRepository.findAll().forEach(sb::append);
-		return ResponseEntity.ok(sb.toString());
-	}
-	static String generateRandomOTP() {
-        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
-    
-        PasswordGenerator generator = new PasswordGenerator();
-        String password = generator.generatePassword(5, rules);
-        return password;
-    }
-
-	private UserInfo EncryptPassword(UserInfo userInfo) throws Exception {
-		String currentPass = userInfo.getPassword();
-		userInfo.setPassword(secureKeysService.EncryptString(currentPass));
-		return userInfo;
-	}
-
 	@PostMapping("/createRoomieProfile")
 	public ResponseEntity<String> createRoomieProfile(@RequestBody RoomieProfile roomieProfile) throws Exception {
 		try{
@@ -206,28 +186,36 @@ public class RoomieController {
 	public ResponseEntity<String> getRoomieProfilesBasedOnFilters(@RequestHeader(value="gender") String gender) {
 		try{
 			var val = roomieProfileRespository.findByGender(gender);
-			if (val.isPresent()) {
-				RoomieProfile profile = val.get();
-				ObjectMapper Obj = new ObjectMapper();  
-				try {  
-					// Converting the Java object into a JSON string  
-					String jsonStr = Obj.writeValueAsString(profile);  
-					// Displaying Java object into a JSON string  
-					System.out.println(jsonStr);  
-					return ResponseEntity.status(200).body(jsonStr);
-				}  
-				catch (IOException e) {  
-					e.printStackTrace();  
-				}  
-				logger.info("User {}", profile.getEmail());
-				return ResponseEntity.status(500).body("Internal Server Error");
-			} else {
-				logger.info("User {} is not registered", gender);
-				return ResponseEntity.status(419).body("user not registered");
-			}
+			String jsonStr = convertJavaObjectToJSON(val.get());
+			return ResponseEntity.status(200).body(jsonStr); 
 		} catch(Exception e){
 			logger.info("error:",e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
+	}
+
+	@GetMapping("/")
+	public ResponseEntity<String> getAllUsers() {
+		StringBuilder sb = new StringBuilder();
+    	userInfoRepository.findAll().forEach(sb::append);
+		return ResponseEntity.ok(sb.toString());
+	}
+	static String generateRandomOTP() {
+        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
+    
+        PasswordGenerator generator = new PasswordGenerator();
+        String password = generator.generatePassword(5, rules);
+        return password;
+    }
+
+	private UserInfo EncryptPassword(UserInfo userInfo) throws Exception {
+		String currentPass = userInfo.getPassword();
+		userInfo.setPassword(secureKeysService.EncryptString(currentPass));
+		return userInfo;
+	}
+
+	private String convertJavaObjectToJSON(Object obj) throws Exception {
+		ObjectMapper Obj = new ObjectMapper();  
+		return  Obj.writeValueAsString(obj); 
 	}
 }
