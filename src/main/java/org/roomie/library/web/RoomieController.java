@@ -33,6 +33,8 @@ public class RoomieController {
 
 	@Autowired
 	UserInfoRepository userInfoRepository;
+
+	@Autowired
 	RoomieProfileRespository roomieProfileRespository;
 
 	@Autowired
@@ -175,6 +177,7 @@ public class RoomieController {
 				return ResponseEntity.status(200).body("roomie profile created");
 			}
 		} catch(Exception e){
+			logger.info("error:",e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		} 
 	}
