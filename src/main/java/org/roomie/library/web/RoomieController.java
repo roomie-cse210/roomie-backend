@@ -181,4 +181,21 @@ public class RoomieController {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		} 
 	}
+
+	@PostMapping("/sendEmailInvite")
+	public ResponseEntity<String> emailOTP(@RequestHeader(value="requesterEmail") String requesterEmail, @RequestHeader(value="receiverEmail") String receiverEmail) {
+		try{
+			var val = roomieProfileRespository.findById(requesterEmail);
+			if (val.isPresent()) {
+				RoomieProfile profile = val.get();
+				emailSenderService.sendEmailInvite(requesterEmail, receiverEmail, profile.getName());
+				return ResponseEntity.status(200).body("request sent");
+			} else {
+				logger.info("User {} is not registered", requesterEmail);
+				return ResponseEntity.status(419).body("user not registered");
+			}
+		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
 }

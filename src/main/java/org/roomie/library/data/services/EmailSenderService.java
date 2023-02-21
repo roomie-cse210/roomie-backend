@@ -21,6 +21,11 @@ public class EmailSenderService {
     public String getEmailForgotPasswordOTPBody(String OTP){
         return "Hey!! \n\n Code to validate your roomie password reset request is \"" + OTP + "\". Kindly use it to validate your password reset request. \n\nRegards, \nTeam Roomie";
     }
+
+    public String getInviteEmailBody(String requesterEmail, String requesterName){
+        return "Hey!! \n\n You have received a new roommate request from " + requesterName + ". We think you guys will be perfect roommates. You can reach out to " + requesterName + " at: " +  requesterEmail + ". \n\nRegards, \nTeam Roomie";
+    }
+
     public void sendSignupOTPEmail(String toEmail,
                                 String OTP) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -40,6 +45,15 @@ public class EmailSenderService {
         logger.info("Code email sent to: " + toEmail);
     }
 
+    public void sendEmailInvite(String requesterEmail,
+                                String receiverEmail, String requesterName) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(receiverEmail);
+        message.setText(getInviteEmailBody(requesterEmail, requesterName));
+        message.setSubject("New Roomie Request Received");
+        mailSender.send(message);
+        logger.info("New Roomie Request sent to: " + receiverEmail);
+    }
     
 }
 
