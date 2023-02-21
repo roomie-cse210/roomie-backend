@@ -23,6 +23,9 @@ import java.util.List;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;  
+import java.io.IOException;  
+
 
 @CrossOrigin
 @RestController
@@ -183,7 +186,7 @@ public class RoomieController {
 	}
 
 	@PostMapping("/sendEmailInvite")
-	public ResponseEntity<String> emailOTP(@RequestHeader(value="requesterEmail") String requesterEmail, @RequestHeader(value="receiverEmail") String receiverEmail) {
+	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value="requesterEmail") String requesterEmail, @RequestHeader(value="receiverEmail") String receiverEmail) {
 		try{
 			var val = roomieProfileRespository.findById(requesterEmail);
 			if (val.isPresent()) {
@@ -195,6 +198,35 @@ public class RoomieController {
 				return ResponseEntity.status(419).body("user not registered");
 			}
 		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@GetMapping("/getRoomieProfilesBasedOnFilters")
+	public ResponseEntity<String> getRoomieProfilesBasedOnFilters(@RequestHeader(value="gender") String gender) {
+		try{
+			var val = roomieProfileRespository.findByGender(gender);
+			if (val.isPresent()) {
+				RoomieProfile profile = val.get();
+				ObjectMapper Obj = new ObjectMapper();  
+				try {  
+					// Converting the Java object into a JSON string  
+					String jsonStr = Obj.writeValueAsString(profile);  
+					// Displaying Java object into a JSON string  
+					System.out.println(jsonStr);  
+					return ResponseEntity.status(200).body(jsonStr);
+				}  
+				catch (IOException e) {  
+					e.printStackTrace();  
+				}  
+				logger.info("User {}", profile.getEmail());
+				return ResponseEntity.status(500).body("Internal Server Error");
+			} else {
+				logger.info("User {} is not registered", gender);
+				return ResponseEntity.status(419).body("user not registered");
+			}
+		} catch(Exception e){
+			logger.info("error:",e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}

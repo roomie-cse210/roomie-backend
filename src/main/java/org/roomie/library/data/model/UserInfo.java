@@ -23,7 +23,7 @@ public class UserInfo {
 		return email;
 	}
 
-	@DynamoDBAttribute
+	@DynamoDBAttribute(attributeName = "password")
 	public String getPassword() {
 		return password;
 	}

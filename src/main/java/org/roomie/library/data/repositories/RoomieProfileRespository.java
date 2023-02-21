@@ -9,4 +9,6 @@ import org.springframework.data.repository.CrudRepository;
 @EnableScan
 public interface RoomieProfileRespository extends CrudRepository<RoomieProfile, String> {
     Optional<RoomieProfile> findById(String email);
+
+    Optional<RoomieProfile> findByGender(String gender);
 }

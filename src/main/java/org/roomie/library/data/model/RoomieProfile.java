@@ -41,6 +41,7 @@ public class RoomieProfile {
 		this.email = email;
 	}
 
+	@DynamoDBAttribute(attributeName = "gender")
     public String getGender() {
 		return gender;
 	}
@@ -49,6 +50,7 @@ public class RoomieProfile {
 		this.gender = gender;
 	}
 
+	@DynamoDBAttribute(attributeName = "age")
     public Integer getAge() {
 		return age;
 	}
@@ -57,6 +59,7 @@ public class RoomieProfile {
 		this.age = age;
 	}
 
+	@DynamoDBAttribute(attributeName = "nationality")
     public String getNationality() {
 		return nationality;
 	}
@@ -65,6 +68,7 @@ public class RoomieProfile {
 		this.nationality= nationality;
 	}
 
+	@DynamoDBAttribute(attributeName = "occupation")
     public String getOccupation() {
 		return occupation;
 	}
@@ -73,6 +77,7 @@ public class RoomieProfile {
 		this.occupation= occupation;
 	}
 
+	@DynamoDBAttribute(attributeName = "minBudget")
     public Integer getMinBudget() {
 		return minBudget;
 	}
@@ -81,6 +86,7 @@ public class RoomieProfile {
 		this.minBudget = minBudget;
 	}
 
+	@DynamoDBAttribute(attributeName = "maxBudget")
     public Integer getMaxBudget() {
 		return maxBudget;
 	}
@@ -89,6 +95,7 @@ public class RoomieProfile {
 		this.maxBudget = maxBudget;
 	}
 
+	@DynamoDBAttribute(attributeName = "smoking")
     public String getSmoking() {
 		return smoking;
 	}
@@ -97,6 +104,7 @@ public class RoomieProfile {
 		this.smoking= smoking;
 	}
 
+	@DynamoDBAttribute(attributeName = "pets")
     public String getPets() {
 		return pets;
 	}
@@ -105,6 +113,7 @@ public class RoomieProfile {
 		this.pets= pets;
 	}
 
+	@DynamoDBAttribute(attributeName = "food")
     public String getFood() {
 		return food;
 	}
@@ -113,6 +122,7 @@ public class RoomieProfile {
 		this.food= food;
 	}
 
+	@DynamoDBAttribute(attributeName = "riser")
 	public String getRiser() {
 		return riser;
 	}
@@ -121,6 +131,7 @@ public class RoomieProfile {
 		this.riser = riser;
 	}
 
+	@DynamoDBAttribute(attributeName = "sleep")
     public String getSleep() {
 		return sleep;
 	}
@@ -137,6 +148,7 @@ public class RoomieProfile {
 	// 	this.photos= photos;
 	// }
 
+	@DynamoDBAttribute(attributeName = "isPrivate")
     public String getIsPrivate() {
 		return isPrivate;
 	}
