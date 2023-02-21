@@ -4,3 +4,6 @@
 /Users/yejin/UCSD/CSE210/roomie-backend/src/main/java/org/roomie/library/Application.java
 /Users/yejin/UCSD/CSE210/roomie-backend/src/main/java/org/roomie/library/web/RoomieController.java
 /Users/yejin/UCSD/CSE210/roomie-backend/src/main/java/org/roomie/library/data/services/EmailSenderService.java
+/Users/yejin/UCSD/CSE210/roomie-backend/src/main/java/org/roomie/library/data/repositories/RoomieProfileRespository.java
+/Users/yejin/UCSD/CSE210/roomie-backend/src/main/java/org/roomie/library/data/services/SecureKeysService.java
+/Users/yejin/UCSD/CSE210/roomie-backend/src/main/java/org/roomie/library/data/model/RoomieProfile.java

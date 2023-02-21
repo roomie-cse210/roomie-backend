@@ -17,9 +17,10 @@ public class RoomieProfile {
     private Integer maxBudget;
     private String smoking;
     private String pets;
-    private String[] food;
-    private String[] sleep;
-    private int[] photos;
+    private String food;
+    private String riser;
+	private String sleep;
+    //private int[] photos;
     private String isPrivate;
 
     @DynamoDBHashKey
@@ -104,29 +105,37 @@ public class RoomieProfile {
 		this.pets= pets;
 	}
 
-    public String[] getFood() {
+    public String getFood() {
 		return food;
 	}
 
-	public void setFood(String[] food) {
+	public void setFood(String food) {
 		this.food= food;
 	}
 
-    public String[] getSleep() {
+	public String getRiser() {
+		return riser;
+	}
+
+	public void setRiser(String riser) {
+		this.riser = riser;
+	}
+
+    public String getSleep() {
 		return sleep;
 	}
 
-	public void setSleep(String[] sleep) {
+	public void setSleep(String sleep) {
 		this.sleep = sleep;
 	}
 
-    public int[] getPhotos() {
-		return photos;
-	}
+    // public int[] getPhotos() {
+	// 	return photos;
+	// }
 
-	public void setPhotos(int[] photos) {
-		this.photos= photos;
-	}
+	// public void setPhotos(int[] photos) {
+	// 	this.photos= photos;
+	// }
 
     public String getIsPrivate() {
 		return isPrivate;
@@ -149,6 +158,7 @@ public class RoomieProfile {
                 ", smoking='" + smoking + '\'' +
                 ", pets='" + pets + '\'' +
                 ", foods='" + food + '\'' +
+				", riser='" + riser + '\'' +
                 ", sleep='" + sleep + '\'' +
                 ", isPrivate='" + isPrivate + '\'' +
 				'}';

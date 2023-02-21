@@ -1,6 +1,8 @@
 package org.roomie.library.web;
+import org.roomie.library.data.model.RoomieProfile;
 import org.roomie.library.data.model.UserInfo;
 import org.roomie.library.data.repositories.UserInfoRepository;
+import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ public class RoomieController {
 
 	@Autowired
 	UserInfoRepository userInfoRepository;
+	RoomieProfileRespository roomieProfileRespository;
 
 	@Autowired
 	private EmailSenderService emailSenderService;
@@ -78,7 +81,7 @@ public class RoomieController {
 			}
 		} catch(Exception e){
 			return ResponseEntity.status(500).body("Internal Server Error");
-		}
+		} 
 	}
 
 	@PostMapping("/updateUser")
@@ -155,5 +158,23 @@ public class RoomieController {
 		String currentPass = userInfo.getPassword();
 		userInfo.setPassword(secureKeysService.EncryptString(currentPass));
 		return userInfo;
+	}
+
+	@PostMapping("/createRoomieProfile")
+	public ResponseEntity<String> createRoomieProfile(@RequestBody RoomieProfile roomieProfile) throws Exception {
+		try{
+			logger.info("Checking whether email is already registered");
+			var val = roomieProfileRespository.findById(roomieProfile.getEmail());
+			if (val.isPresent()) {
+				logger.info("roomie profile {} is already created", roomieProfile.getEmail());
+				return ResponseEntity.status(420).body("roomie profile already created");
+			} else {
+				var uinfo = roomieProfileRespository.save(roomieProfile);
+				logger.info("Created user {} successfully", uinfo.getEmail());
+				return ResponseEntity.status(200).body("roomie profile created");
+			}
+		} catch(Exception e){
+			return ResponseEntity.status(500).body("Internal Server Error");
+		} 
 	}
 }
