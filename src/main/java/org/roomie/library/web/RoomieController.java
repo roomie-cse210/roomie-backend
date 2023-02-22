@@ -166,11 +166,12 @@ public class RoomieController {
 		} 
 	}
 
-	@GetMapping("/getRoomieProfile")
+	@PostMapping("/getRoomieProfile")
 	public ResponseEntity<String> getRoomieProfile(@RequestHeader(value="email") String email) {
 		String jsonStr = new String();
 		try{
 			jsonStr = dynamoDbRequestService.getUserProfile(email);
+			logger.info("roomie profile {} is fetched", email);
 			return ResponseEntity.status(200).body(jsonStr);
 			 
 		} catch(Exception e){
@@ -180,11 +181,12 @@ public class RoomieController {
 		}
 	}
 
-	@GetMapping("/getAllRoomieProfiles")
+	@PostMapping("/getAllRoomieProfiles")
 	public ResponseEntity<List<String>> getAllRoomieProfiles() {
 		List<String> jsonStr = new ArrayList<String>();
 		try{
 			jsonStr = dynamoDbRequestService.getAllUserProfiles();
+			logger.info("all roomie profile {} is fetched");
 			return ResponseEntity.status(200).body(jsonStr);
 			 
 		} catch(Exception e){
