@@ -2,7 +2,7 @@ package org.roomie.library.data.model;
 
 public class RoomieProfileFilterRequest {
     private String gender;
-    private Integer age;
+    private Integer ageCategory;
     private String nationality;
     private String occupation;
     private Integer minBudget;
@@ -21,12 +21,32 @@ public class RoomieProfileFilterRequest {
 		this.gender = gender;
 	}
 
-    public Integer getAge() {
-		return age;
+	public Integer getAgeCategory() {
+		return ageCategory;
 	}
 
-	public void setAge(Integer age) {
-		this.age = age;
+	public void setAgeCategory(Integer ageCategory) {
+		this.ageCategory = ageCategory;
+	}
+
+    public Integer getMinAge() {
+		if(ageCategory == 1)
+			return 0;
+		else if(ageCategory == 2)
+			return 25;
+		else if(ageCategory == 3)
+			return 35;
+		return 45;
+	}
+
+	public Integer getMaxAge() {
+		if(ageCategory == 1)
+			return 25;
+		else if(ageCategory == 2)
+			return 35;
+		else if(ageCategory == 3)
+			return 45;
+		return 20000;
 	}
 
     public String getNationality() {

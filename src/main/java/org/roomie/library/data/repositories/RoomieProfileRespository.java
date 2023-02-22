@@ -10,7 +10,8 @@ import org.springframework.data.repository.CrudRepository;
 public interface RoomieProfileRespository extends CrudRepository<RoomieProfile, String> {
     Optional<RoomieProfile> findById(String email);
 
-    Optional<List<RoomieProfile>> findByGenderAndAgeAndNationalityAndOccupationAndMinBudgetAndMaxBudgetAndSmokingAndPetsAndFoodAndRiserAndSleepAndIsPrivate(
-                                                String gender,Integer age, String nationality, String occupation,Integer minBudget,
+    Optional<List<RoomieProfile>> findByGenderAndAgeBetweenAndNationalityAndOccupationAndMinBudgetAndMaxBudgetAndSmokingAndPetsAndFoodAndRiserAndSleepAndIsPrivate(
+                                                String gender,Integer minAge,Integer maxAge, String nationality, String occupation,Integer minBudget,
                                                 Integer maxBudget,String smoking,String pets, String food,String riser,String sleep, String isPrivate );
+                                                
 }

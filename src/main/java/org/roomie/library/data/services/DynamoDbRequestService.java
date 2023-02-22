@@ -36,9 +36,10 @@ public class DynamoDbRequestService {
 
     public List<String> getFilteredRecords(RoomieProfileFilterRequest roomieProfileFilterRequest) throws Exception {
         List<String> jsonStr = new ArrayList<String>();
-        var val = roomieProfileRespository.findByGenderAndAgeAndNationalityAndOccupationAndMinBudgetAndMaxBudgetAndSmokingAndPetsAndFoodAndRiserAndSleepAndIsPrivate(
+        var val = roomieProfileRespository.findByGenderAndAgeBetweenAndNationalityAndOccupationAndMinBudgetAndMaxBudgetAndSmokingAndPetsAndFoodAndRiserAndSleepAndIsPrivate(
             roomieProfileFilterRequest.getGender(), 
-            roomieProfileFilterRequest.getAge(),
+            roomieProfileFilterRequest.getMinAge(),
+            roomieProfileFilterRequest.getMaxAge(),
             roomieProfileFilterRequest.getNationality(),
             roomieProfileFilterRequest.getOccupation(),
             roomieProfileFilterRequest.getMinBudget(),
