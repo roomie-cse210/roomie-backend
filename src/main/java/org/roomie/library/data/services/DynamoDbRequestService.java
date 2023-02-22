@@ -12,6 +12,28 @@ public class DynamoDbRequestService {
     @Autowired
     RoomieProfileRespository roomieProfileRespository;
 
+    public String getUserProfile(String email) throws Exception {
+        String jsonStr = new String();
+        var val = roomieProfileRespository.findById(email);
+        if (val.isPresent()){
+            ObjectMapper mapper = new ObjectMapper();  
+            jsonStr = mapper.writeValueAsString(val.get());
+        }
+        return jsonStr;
+    }
+
+    public List<String> getAllUserProfiles() throws Exception {
+        List<RoomieProfile> profiles = new ArrayList<RoomieProfile>();
+        roomieProfileRespository.findAll().forEach(profiles::add);
+
+        List<String> jsonStrList = new ArrayList<String>();
+        for(int i =0; i<profiles.size(); i++){
+			ObjectMapper mapper = new ObjectMapper();  
+			jsonStrList.add(mapper.writeValueAsString(profiles.get(i)));
+		}
+        return jsonStrList;
+    }
+
     public List<String> getFilteredRecords(RoomieProfileFilterRequest roomieProfileFilterRequest) throws Exception {
         List<String> jsonStr = new ArrayList<String>();
         var val = roomieProfileRespository.findByGenderAndAgeAndNationalityAndOccupationAndMinBudgetAndMaxBudgetAndSmokingAndPetsAndFoodAndRiserAndSleepAndIsPrivate(
@@ -33,7 +55,6 @@ public class DynamoDbRequestService {
 			jsonStr = convertJavaObjectToJSON(val.get());
 
         return jsonStr;
-        
     }
 
     private List<String> convertJavaObjectToJSON(List<RoomieProfile> obj) throws Exception {
@@ -44,5 +65,4 @@ public class DynamoDbRequestService {
 		}
 		return  jsonStrList;
 	}
-
 }

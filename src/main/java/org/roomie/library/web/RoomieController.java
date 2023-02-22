@@ -150,7 +150,6 @@ public class RoomieController {
 	@PostMapping("/createRoomieProfile")
 	public ResponseEntity<String> createRoomieProfile(@RequestBody RoomieProfile roomieProfile) throws Exception {
 		try{
-			logger.info("Checking whether email is already registered");
 			var val = roomieProfileRespository.findById(roomieProfile.getEmail());
 			if (val.isPresent()) {
 				roomieProfileRespository.save(roomieProfile);
@@ -165,6 +164,34 @@ public class RoomieController {
 			logger.info("error:",e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		} 
+	}
+
+	@GetMapping("/getRoomieProfile")
+	public ResponseEntity<String> getRoomieProfile(@RequestHeader(value="email") String email) {
+		String jsonStr = new String();
+		try{
+			jsonStr = dynamoDbRequestService.getUserProfile(email);
+			return ResponseEntity.status(200).body(jsonStr);
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
+			jsonStr = "Internal Server Error";
+			return ResponseEntity.status(500).body(jsonStr);
+		}
+	}
+
+	@GetMapping("/getAllRoomieProfiles")
+	public ResponseEntity<List<String>> getAllRoomieProfiles() {
+		List<String> jsonStr = new ArrayList<String>();
+		try{
+			jsonStr = dynamoDbRequestService.getAllUserProfiles();
+			return ResponseEntity.status(200).body(jsonStr);
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
+			jsonStr.add("Internal Server Error");
+			return ResponseEntity.status(500).body(jsonStr);
+		}
 	}
 
 	@GetMapping("/getRoomieProfilesBasedOnFilters")
