@@ -22,6 +22,7 @@ public class RoomieProfile {
 	private String sleep;
     //private int[] photos;
     private String isPrivate;
+	private String description;
 
     @DynamoDBHashKey
 	public String getEmail() {
@@ -157,6 +158,15 @@ public class RoomieProfile {
 		this.isPrivate= isPrivate;
 	}
 
+	@DynamoDBAttribute(attributeName = "description")
+    public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description= description;
+	}
+
 	@Override
 	public String toString() {
 		return "UserInfo{" +
@@ -173,6 +183,7 @@ public class RoomieProfile {
 				", riser='" + riser + '\'' +
                 ", sleep='" + sleep + '\'' +
                 ", isPrivate='" + isPrivate + '\'' +
+				", description='" + description + '\'' +
 				'}';
 	}
 }
