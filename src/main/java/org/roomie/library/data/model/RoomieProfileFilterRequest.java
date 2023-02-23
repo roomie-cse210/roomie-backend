@@ -133,7 +133,7 @@ public class RoomieProfileFilterRequest {
 	public String toString() {
 		return "UserInfo{" +
                 ", gender='" + gender + '\'' +
-                ", age='" + age + '\'' +
+                ", age='" + ageCategory + '\'' +
                 ", nationality='" + nationality + '\'' +
                 ", occupation='" + occupation + '\'' +
                 ", (minBudget, maxBudget)='" + "(" + minBudget + "," + maxBudget + ")" + '\'' +

@@ -196,7 +196,7 @@ public class RoomieController {
 		}
 	}
 
-	@GetMapping("/getRoomieProfilesBasedOnFilters")
+	@PostMapping("/getRoomieProfilesBasedOnFilters")
 	public ResponseEntity<List<String>> getRoomieProfilesBasedOnFilters(@RequestBody RoomieProfileFilterRequest roomieProfileFilterRequest) {
 		List<String> jsonStr = new ArrayList<String>();
 		try{
