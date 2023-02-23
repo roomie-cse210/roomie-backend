@@ -182,31 +182,31 @@ public class RoomieController {
 	}
 
 	@PostMapping("/getAllRoomieProfiles")
-	public ResponseEntity<List<String>> getAllRoomieProfiles() {
+	public ResponseEntity<String> getAllRoomieProfiles() {
 		List<String> jsonStr = new ArrayList<String>();
 		try{
 			jsonStr = dynamoDbRequestService.getAllUserProfiles();
 			logger.info("all roomie profile {} is fetched");
-			return ResponseEntity.status(200).body(jsonStr);
+			return ResponseEntity.status(200).body(jsonStr.toString());
 			 
 		} catch(Exception e){
 			logger.info("error:",e);
 			jsonStr.add("Internal Server Error");
-			return ResponseEntity.status(500).body(jsonStr);
+			return ResponseEntity.status(500).body(jsonStr.toString());
 		}
 	}
 
 	@PostMapping("/getRoomieProfilesBasedOnFilters")
-	public ResponseEntity<List<String>> getRoomieProfilesBasedOnFilters(@RequestBody RoomieProfileFilterRequest roomieProfileFilterRequest) {
+	public ResponseEntity<String> getRoomieProfilesBasedOnFilters(@RequestBody RoomieProfileFilterRequest roomieProfileFilterRequest) {
 		List<String> jsonStr = new ArrayList<String>();
 		try{
 			jsonStr = dynamoDbRequestService.getFilteredRecords(roomieProfileFilterRequest);
-			return ResponseEntity.status(200).body(jsonStr);
+			return ResponseEntity.status(200).body(jsonStr.toString());
 			 
 		} catch(Exception e){
 			logger.info("error:",e);
 			jsonStr.add("Internal Server Error");
-			return ResponseEntity.status(500).body(jsonStr);
+			return ResponseEntity.status(500).body(jsonStr.toString());
 		}
 	}
 
