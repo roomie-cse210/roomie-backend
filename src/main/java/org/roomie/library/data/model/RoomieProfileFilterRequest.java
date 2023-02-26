@@ -30,6 +30,8 @@ public class RoomieProfileFilterRequest {
 	}
 
     public Integer getMinAge() {
+		if(ageCategory == null)
+			return -1;
 		if(ageCategory == 1)
 			return 0;
 		else if(ageCategory == 2)
@@ -40,6 +42,8 @@ public class RoomieProfileFilterRequest {
 	}
 
 	public Integer getMaxAge() {
+		if(ageCategory == null)
+			return 1000;
 		if(ageCategory == 1)
 			return 25;
 		else if(ageCategory == 2)
