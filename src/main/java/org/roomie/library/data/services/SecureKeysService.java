@@ -45,12 +45,12 @@ public class SecureKeysService {
         return new String(enctVal);
     }
 
-    public String EncryptString(String inputString) throws Exception {
+    public String encryptString(String inputString) throws Exception {
         Key key = generateKey();
         return encrypt(inputString, key);
     }
 
-    public String HashPassword(String password) throws Exception {
+    public String hashPassword(String password) throws Exception {
         String hashedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -60,7 +60,7 @@ public class SecureKeysService {
             for (byte b : hashInBytes) {
                 sb.append(String.format("%02x", b));
             }
-            hashedPassword = EncryptString(sb.toString());
+            hashedPassword = encryptString(sb.toString());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

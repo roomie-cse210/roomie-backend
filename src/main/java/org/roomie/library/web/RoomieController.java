@@ -50,7 +50,7 @@ public class RoomieController {
 
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) throws Exception {
-		userInfo = EncryptPassword(userInfo);
+		userInfo = encryptPassword(userInfo);
 		try{
 			logger.info("Checking login credentials");
 			var val = userInfoRepository.findById(userInfo.getEmail());
@@ -74,7 +74,7 @@ public class RoomieController {
 
 	@PostMapping("/createUser")
 	public ResponseEntity<String> createUser(@RequestBody UserInfo userInfo) throws Exception {
-		userInfo = EncryptPassword(userInfo);
+		userInfo = encryptPassword(userInfo);
 		try{
 			logger.info("Checking whether email is already registered");
 			var val = userInfoRepository.findById(userInfo.getEmail());
@@ -93,7 +93,7 @@ public class RoomieController {
 
 	@PostMapping("/updateUser")
 	public ResponseEntity<String> updateUser(@RequestBody UserInfo userInfo) throws Exception {
-		userInfo = EncryptPassword(userInfo);
+		userInfo = encryptPassword(userInfo);
 		try{
 			logger.info("Checking whether email is registered");
 			var val = userInfoRepository.findById(userInfo.getEmail());
@@ -242,9 +242,9 @@ public class RoomieController {
         return password;
     }
 
-	private UserInfo EncryptPassword(UserInfo userInfo) throws Exception {
+	private UserInfo encryptPassword(UserInfo userInfo) throws Exception {
 		String currentPass = userInfo.getPassword();
-		userInfo.setPassword(secureKeysService.HashPassword(currentPass));
+		userInfo.setPassword(secureKeysService.hashPassword(currentPass));
 		return userInfo;
 	}
 	
