@@ -244,7 +244,7 @@ public class RoomieController {
 
 	private UserInfo EncryptPassword(UserInfo userInfo) throws Exception {
 		String currentPass = userInfo.getPassword();
-		userInfo.setPassword(secureKeysService.EncryptString(currentPass));
+		userInfo.setPassword(secureKeysService.HashPassword(currentPass));
 		return userInfo;
 	}
 	
