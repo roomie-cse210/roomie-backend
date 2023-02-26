@@ -7,6 +7,9 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 @Service
 public class SecureKeysService {
@@ -42,13 +45,25 @@ public class SecureKeysService {
         return new String(enctVal);
     }
 
-    public String EncryptString(String inputString) throws Exception {
+    public String encryptString(String inputString) throws Exception {
         Key key = generateKey();
         return encrypt(inputString, key);
     }
 
-    public String DecryptString(String encriptedValue) throws Exception {
-        Key key = generateKey();
-        return decrypt(encriptedValue,key);
+    public String hashPassword(String password) throws Exception {
+        String hashedPassword = null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashInBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashInBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            hashedPassword = encryptString(sb.toString());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return hashedPassword;
     }
 }

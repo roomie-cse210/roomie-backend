@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 
-@DynamoDBTable(tableName = "RoomieProfiles")
+@DynamoDBTable(tableName = "Roomie_Record")
 public class RoomieProfile {
     private String email;
     private String name;
@@ -13,8 +13,7 @@ public class RoomieProfile {
     private Integer age;
     private String nationality;
     private String occupation;
-    private Integer minBudget;
-    private Integer maxBudget;
+    private Integer approxBudget;
     private String smoking;
     private String pets;
     private String food;
@@ -78,22 +77,13 @@ public class RoomieProfile {
 		this.occupation= occupation;
 	}
 
-	@DynamoDBAttribute(attributeName = "minBudget")
-    public Integer getMinBudget() {
-		return minBudget;
+	@DynamoDBAttribute(attributeName = "approxBudget")
+    public Integer getApproxBudget() {
+		return approxBudget;
 	}
 
-	public void setMinBudget(Integer minBudget) {
-		this.minBudget = minBudget;
-	}
-
-	@DynamoDBAttribute(attributeName = "maxBudget")
-    public Integer getMaxBudget() {
-		return maxBudget;
-	}
-
-	public void setMaxBudget(Integer maxBudget) {
-		this.maxBudget = maxBudget;
+	public void setApproxBudget(Integer approxBudget) {
+		this.approxBudget = approxBudget;
 	}
 
 	@DynamoDBAttribute(attributeName = "smoking")
@@ -176,7 +166,7 @@ public class RoomieProfile {
                 ", age='" + age + '\'' +
                 ", nationality='" + nationality + '\'' +
                 ", occupation='" + occupation + '\'' +
-                ", (minBudget, maxBudget)='" + "(" + minBudget + "," + maxBudget + ")" + '\'' +
+                ", (approxBudget)='" + approxBudget + '\'' +
                 ", smoking='" + smoking + '\'' +
                 ", pets='" + pets + '\'' +
                 ", foods='" + food + '\'' +
