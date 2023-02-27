@@ -78,6 +78,7 @@ public class DynamoDbRequestService {
         Map<String, Condition> scanExpression = new HashMap<>();
 
         // Set filter expressions based on input parameters
+        scanExpression.put("email", new Condition().withComparisonOperator(ComparisonOperator.NE).withAttributeValueList(new AttributeValue(roomieProfileFilterRequest.getEmail())));
         if (roomieProfileFilterRequest.getGender() != null) {
             scanExpression.put("gender", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieProfileFilterRequest.getGender())));
         }
