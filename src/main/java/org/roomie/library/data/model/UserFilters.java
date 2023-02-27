@@ -179,8 +179,8 @@ public class UserFilters {
 	@Override
 	public String toString() {
 		return "UserInfo{" +
-				", id='" + id + '\'' + 
-				", email='" + email + '\'' +
+				", id='" + getId() + '\'' + 
+				", email='" + getEmail() + '\'' +
                 ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", age='" + age + '\'' +
