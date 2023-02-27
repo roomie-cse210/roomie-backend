@@ -259,7 +259,7 @@ public class RoomieController {
 	}
 
 	@PostMapping("/createAlertOnFilter")
-	public ResponseEntity<String> saveFilter(@RequestBody UserFilters userFilters) {
+	public ResponseEntity<String> createAlertOnFilter(@RequestBody UserFilters userFilters) {
 		try{
 			userFilters.setId(UUID.randomUUID().toString());
 			var userFilter = userFiltersRepository.save(userFilters);
