@@ -22,7 +22,7 @@ import java.util.List;
 
 
 @Configuration
-@EnableDynamoDBRepositories(basePackages = "org.roomie.library.data.repositories")
+// @EnableDynamoDBRepositories(basePackages = "org.roomie.library.data.repositories")
 public class S3Config {
     @Value("${amazon.dynamodb.endpoint}")
     private String amazonDynamoDBEndpoint;
