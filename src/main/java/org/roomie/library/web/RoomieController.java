@@ -1,12 +1,13 @@
 package org.roomie.library.web;
 
 import org.roomie.library.data.model.RoomieProfile;
+import org.roomie.library.data.model.UserFilters;
 import org.roomie.library.data.model.RoomieProfileFilterRequest;
 import org.roomie.library.data.model.UserInfo;
 import org.roomie.library.data.model.RoomieRequest;
 import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.repositories.RoomieProfileRespository;
-import org.roomie.library.data.repositories.RoomieRequestRepository;
+import org.roomie.library.data.repositories.UserFiltersRepository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
 import org.roomie.library.data.services.DynamoDbRequestService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.*;
+import java.util.UUID;
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -53,6 +55,9 @@ public class RoomieController {
 
 	@Autowired
 	private DynamoDbRequestService dynamoDbRequestService;
+
+	@Autowired
+	private UserFiltersRepository userFiltersRepository;
 
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) throws Exception {
@@ -244,6 +249,34 @@ public class RoomieController {
 				return ResponseEntity.status(419).body("user not registered");
 			}
 		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/saveFilter")
+	public ResponseEntity<String> saveFilter(@RequestBody UserFilters userFilters) {
+		try{
+			userFilters.setId(UUID.randomUUID().toString());
+			var userFilter = userFiltersRepository.save(userFilters);
+			logger.info("Created user filter for user {} successfully", userFilter.getEmail());
+			return ResponseEntity.status(200).body("user filter created");
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/saveFilter")
+	public ResponseEntity<String> saveFilter(@RequestBody UserFilters userFilters) {
+		try{
+			userFilters.setId(UUID.randomUUID().toString());
+			var userFilter = userFiltersRepository.save(userFilters);
+			logger.info("Created user filter for user {} successfully", userFilter.getEmail());
+			return ResponseEntity.status(200).body("user filter created");
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
