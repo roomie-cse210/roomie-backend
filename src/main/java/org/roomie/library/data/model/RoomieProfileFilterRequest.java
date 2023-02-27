@@ -1,6 +1,7 @@
 package org.roomie.library.data.model;
 
 public class RoomieProfileFilterRequest {
+	private String email;
     private String gender;
     private Integer ageCategory;
     private String nationality;
@@ -19,6 +20,14 @@ public class RoomieProfileFilterRequest {
 
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Integer getAgeCategory() {
