@@ -10,6 +10,7 @@ import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.repositories.UserFiltersRepository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
+import org.roomie.library.data.services.UserFiltersService;
 import org.roomie.library.data.services.DynamoDbRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,9 @@ public class RoomieController {
 
 	@Autowired
 	private UserFiltersRepository userFiltersRepository;
+
+	@Autowired
+	private UserFiltersService userFiltersService;
 
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) throws Exception {
@@ -170,6 +174,7 @@ public class RoomieController {
 			} else {
 				var roomieinfo = roomieProfileRespository.save(roomieProfile);
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
+				userFiltersService.getMatchingFilterUserEmail(roomieProfile);
 				return ResponseEntity.status(200).body("roomie profile created");
 			}
 		} catch (Exception e) {
