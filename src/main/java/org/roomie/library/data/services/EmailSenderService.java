@@ -26,6 +26,10 @@ public class EmailSenderService {
         return "Hey!! \n\n You have received a new roommate request from " + requesterName + ". We think you guys will be perfect roommates. You can reach out to " + requesterName + " at: " +  requesterEmail + ". \n\nRegards, \nTeam Roomie";
     }
 
+    public String getNewMatchingRoomieEmailBody(String matchingRoomieName){
+        return "Hey!! \n\n We have found a new matching roommie for you. The Roomie name is: " + matchingRoomieName + ". We think you guys will be perfect roommates. To explore further, you can login to roomie.com and connect with the new roomie :). \n\nRegards, \nTeam Roomie";
+    }
+
     public void sendSignupOTPEmail(String toEmail,
                                 String OTP) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -53,6 +57,15 @@ public class EmailSenderService {
         message.setSubject("New Roomie Request Received");
         mailSender.send(message);
         logger.info("New Roomie Request sent to: " + receiverEmail);
+    }
+
+    public void sendEmailForNewMatchingRoomie(String receiverEmail, String matchingRoomieName) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(receiverEmail);
+        message.setText(getNewMatchingRoomieEmailBody(matchingRoomieName));
+        message.setSubject("New potential Roomie available");
+        mailSender.send(message);
+        logger.info("New potential Roomie available: " + receiverEmail);
     }
     
 }
