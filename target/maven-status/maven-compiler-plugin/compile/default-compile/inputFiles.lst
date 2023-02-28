@@ -1,0 +1,12 @@
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/config/DynamoDBConfig.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/model/RoomieProfile.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/services/SecureKeysService.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/repositories/UserInfoRepository.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/model/UserInfo.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/model/RoomieProfileFilterRequest.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/Application.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/services/DynamoDbRequestService.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/repositories/RoomieProfileRespository.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/services/EmailSenderService.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/data/config/S3Config.java
+/Users/yifeining/Documents/GitHub/roomie/roomie-backend/src/main/java/org/roomie/library/web/RoomieController.java

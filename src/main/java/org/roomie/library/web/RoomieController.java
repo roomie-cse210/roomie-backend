@@ -6,6 +6,7 @@ import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
+import org.roomie.library.data.services.AmazonClient;
 import org.roomie.library.data.services.DynamoDbRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,12 @@ import org.passay.PasswordGenerator;
 public class RoomieController {
 
 	private static final Logger logger = LoggerFactory.getLogger( RoomieController.class);
+	private AmazonClient amazonClient;
+
+	@Autowired
+    RoomieController(AmazonClient amazonClient) {
+        this.amazonClient = amazonClient;
+    }
 
 	@Autowired
 	UserInfoRepository userInfoRepository;
@@ -155,10 +162,14 @@ public class RoomieController {
 				roomieProfileRespository.save(roomieProfile);
 				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
 				return ResponseEntity.status(200).body("roomie profile updated");
+
+				//TODO  this.amazonClient.delete/overwrite
 			} else {
 				var roomieinfo = roomieProfileRespository.save(roomieProfile);
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
 				return ResponseEntity.status(200).body("roomie profile created");
+
+				//TODO  this.amazonClient.uploadFile(file)
 			}
 		} catch(Exception e){
 			logger.info("error:",e);
