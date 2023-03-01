@@ -1,9 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.roomie.library.ApplicationTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 3.935 s <<< FAILURE! - in org.roomie.library.ApplicationTest
-whenSpringContextIsBootstrapped_thenNoExceptions  Time elapsed: 0.542 s  <<< ERROR!
-java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'amazonClient': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'amazon.s3.endpoint' in value "${amazon.s3.endpoint}"
-Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'amazon.s3.endpoint' in value "${amazon.s3.endpoint}"
-
