@@ -17,7 +17,6 @@ target/classes/org/roomie/library/data/model/RoomieProfile.class
 target/classes/org/roomie/library/data/repositories/RoomieProfileRespository.class
 target/classes/org/roomie/library/data/model/RoomieProfileFilterRequest.class
 target/classes/org/roomie/library/data/repositories/RoomieProfileRespository.class
-.gitignore
 target/classes/org/roomie/library/data/services/DynamoDbRequestService.class
 target/classes/org/roomie/library/data/services/AmazonClient.class
 target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
