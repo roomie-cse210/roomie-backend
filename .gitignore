@@ -19,3 +19,5 @@ target/classes/org/roomie/library/data/model/RoomieProfileFilterRequest.class
 target/classes/org/roomie/library/data/repositories/RoomieProfileRespository.class
 .gitignore
 target/classes/org/roomie/library/data/services/DynamoDbRequestService.class
+target/maven-status/*
+target/surefire-reports/*
