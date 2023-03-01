@@ -286,6 +286,20 @@ public class RoomieController {
 		}
 	}
 
+	@PostMapping("/createAlertOnFilter")
+	public ResponseEntity<String> createAlertOnFilter(@RequestBody UserFilters userFilters) {
+		try{
+			userFilters.setId(UUID.randomUUID().toString());
+			var userFilter = userFiltersRepository.save(userFilters);
+			logger.info("Created user filter for user {} successfully", userFilter.getEmail());
+			return ResponseEntity.status(200).body("user filter created");
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
 	@GetMapping("/")
 	public ResponseEntity<String> getAllUsers() {
 		StringBuilder sb = new StringBuilder();
