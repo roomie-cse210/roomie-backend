@@ -4,7 +4,7 @@ package org.roomie.library.data.services;
 import org.springframework.beans.factory.annotation.Value;
 // import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+// import org.springframework.web.multipart.MultipartFile;
 
 // import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -22,11 +22,13 @@ import com.amazonaws.services.s3.AmazonS3;
 // import com.amazonaws.services.s3.model.S3ObjectSummary;
 // import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -63,27 +65,31 @@ public class AmazonClient {
 
     }
 
-    // private byte[] convertImage(String file) throws IOException {
-    //     String base64String = file.split(",")[1];
-    //     byte[] convFile = Base64.getDecoder().decode(base64String);
-    //     return convFile;
-    // }
+    private byte[] convertImage(String file) throws IOException {
+        String base64String = file.split(",")[1];
+        byte[] convFile = Base64.getDecoder().decode(base64String);
+        return convFile;
+    }
     
-    private void uploadFileTos3bucket(String fileName, String file) {
-        s3client.putObject(new PutObjectRequest(bucketName, fileName, file)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+    private void uploadFileTos3bucket(String fileName, String file) throws IOException {
+        byte[] convFile = convertImage(file);
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(convFile);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(convFile.length);
+        
+        s3client.putObject(bucketName, fileName, inputStream, metadata);
     }
 
     public String uploadFile(String base64Image, String fileName) {
-
-        String fileUrl = "";
+        String fileNameAppendix = fileName + ".JPG";
+        String fileURL = "";
         try {
-            // byte[] file = convertImage(base64Image);
-            fileUrl = endpointUrl + "/"  + fileName + ".JPG";
-            uploadFileTos3bucket(fileName, base64Image);
+            uploadFileTos3bucket(fileNameAppendix, base64Image);
+            fileURL = "https://" + bucketName + ".s3.us-west-2.amazonaws.com/" + fileNameAppendix;
         } catch (Exception e) {
            e.printStackTrace();
         }
-        return fileUrl;
+        return fileURL;
     }
 }
