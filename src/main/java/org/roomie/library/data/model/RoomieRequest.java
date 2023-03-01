@@ -1,38 +1,47 @@
 package org.roomie.library.data.model;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import org.springframework.data.annotation.Id;
 
-@DynamoDBTable(tableName = "RoomieRequests")
+@DynamoDBTable(tableName = "Roomie_Requests")
 public class RoomieRequest {
-    private String requestSenderEmail;
-    private String requestReceiverEmail;
+    @Id
+	private RoomieRequestKey RoomieRequestKey;
+
     private String message;
     private String status;
 
 	public RoomieRequest(String requestSenderEmail, String requestReceiverEmail, String message, String status) {
-		this.requestSenderEmail = requestSenderEmail;
-		this.requestReceiverEmail = requestReceiverEmail;
+		setRequestSenderEmail(requestSenderEmail);
+		setRequestReceiverEmail(requestReceiverEmail);
 		this.message = message;
 		this.status = status;
 	}
 
 	@DynamoDBHashKey
 	public String getRequestSenderEmail() {
-		return requestSenderEmail;
-	}
-
-    @DynamoDBAttribute(attributeName = "requestReceiverEmail")
-	public String getRequestReceiverEmail() {
-		return requestReceiverEmail;
-	}
-
-	public void setrequestReceiverEmail(String requestReceiverEmail) {
-		this.requestReceiverEmail = requestReceiverEmail;
+		return RoomieRequestKey != null ? RoomieRequestKey.getRequestSenderEmail() : null; 
 	}
 
 	public void setRequestSenderEmail(String requestSenderEmail) {
-		this.requestSenderEmail = requestSenderEmail;
+		if (RoomieRequestKey == null) {
+			RoomieRequestKey = new RoomieRequestKey();
+		}
+		RoomieRequestKey.setRequestSenderEmail(requestSenderEmail);
+	}
+
+	@DynamoDBRangeKey
+	public String getRequestReceiverEmail() {
+		return RoomieRequestKey != null ? RoomieRequestKey.getRequestReceiverEmail() : null; 
+	}
+
+	public void setRequestReceiverEmail(String requestReceiverEmail) {
+		if (RoomieRequestKey == null) {
+			RoomieRequestKey = new RoomieRequestKey();
+		}
+		RoomieRequestKey.setRequestReceiverEmail(requestReceiverEmail);
 	}
 
     @DynamoDBAttribute(attributeName = "message")

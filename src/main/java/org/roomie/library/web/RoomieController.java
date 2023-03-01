@@ -8,6 +8,7 @@ import org.roomie.library.data.model.RoomieRequest;
 import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.repositories.UserFiltersRepository;
+import org.roomie.library.data.repositories.RoomieRequestRepository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
 import org.roomie.library.data.services.UserFiltersService;
