@@ -231,34 +231,19 @@ public class RoomieController {
 				RoomieProfile profile = val.get();
 				// call service
 				emailSenderService.sendEmailInvite(requesterEmail, receiverEmail, profile.getName(), optionalMsg);
-				// save request 
-				var roomieRequest = roomieRequestRepository.save(new RoomieRequest(requesterEmail, receiverEmail, optionalMsg, "P"));
-				logger.info("Sent roomie request {} successfully", roomieRequest.getRequestSenderEmail());
+				try{
+					// save request 
+					var roomieRequest = roomieRequestRepository.save(new RoomieRequest(requesterEmail, receiverEmail, optionalMsg, "P"));
+					logger.info("Sent roomie request {} successfully", roomieRequest.getRequestSenderEmail());
+				} catch(Exception e){
+					return ResponseEntity.status(500).body("Internal Server Error");
+				}
 				return ResponseEntity.status(200).body("request sent");
 			} else {
 				logger.info("User {} is not registered", requesterEmail);
 				return ResponseEntity.status(419).body("user not registered");
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(500).body("Internal Server Error");
-		}
-	}
-
-	@PostMapping("/createRoomieRequest")
-	public ResponseEntity<String> createRoomieRequest(@RequestBody RoomieRequest roomieRequest) throws Exception {
-		try {
-			var val = roomieRequestRepository.findById(roomieRequest.getRequestSenderEmail());
-			if (val.isPresent()) {
-
-				logger.info("User {} is already registered", userInfo.getEmail());
-				return ResponseEntity.status(420).body("request already sent");
-			} else {
-				var roomieinfo = roomieRequestRespository.save(roomieProfile);
-				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
-				return ResponseEntity.status(200).body("roomie profile created");
-			}
-		} catch (Exception e) {
-			logger.info("error:", e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
