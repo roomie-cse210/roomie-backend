@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 Test set: org.roomie.library.ApplicationTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 5.788 s <<< FAILURE! - in org.roomie.library.ApplicationTest
-whenSpringContextIsBootstrapped_thenNoExceptions  Time elapsed: 0.002 s  <<< ERROR!
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 3.935 s <<< FAILURE! - in org.roomie.library.ApplicationTest
+whenSpringContextIsBootstrapped_thenNoExceptions  Time elapsed: 0.542 s  <<< ERROR!
 java.lang.IllegalStateException: Failed to load ApplicationContext
-Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'emailSenderService': Unsatisfied dependency expressed through field 'mailSender'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
-Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.springframework.mail.javamail.JavaMailSender' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'amazonClient': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'amazon.s3.endpoint' in value "${amazon.s3.endpoint}"
+Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'amazon.s3.endpoint' in value "${amazon.s3.endpoint}"
 

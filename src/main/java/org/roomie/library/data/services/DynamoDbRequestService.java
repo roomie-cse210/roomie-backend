@@ -45,7 +45,6 @@ public class DynamoDbRequestService {
 		}
         return jsonStrList;
     }
-
     private boolean allFieldsNull(RoomieProfileFilterRequest roomieProfileFilterRequest){
         if(roomieProfileFilterRequest.getGender() == null &&  
         roomieProfileFilterRequest.getMinAge() == 0 &&  

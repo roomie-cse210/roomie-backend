@@ -20,7 +20,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
 import java.util.Arrays;
+import java.io.File;
 import java.util.*;
 
 import org.passay.CharacterRule;
@@ -158,23 +163,37 @@ public class RoomieController {
 	public ResponseEntity<String> createRoomieProfile(@RequestBody RoomieProfile roomieProfile) throws Exception {
 		try{
 			var val = roomieProfileRespository.findById(roomieProfile.getEmail());
+			String uniquePhotoName = roomieProfile.getEmail();
+
 			if (val.isPresent()) {
+				//TODO  this.amazonClient.delete/overwrite	
+				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+				roomieProfile.setPhotoURL(returnedURL);
+				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
+
 				roomieProfileRespository.save(roomieProfile);
 				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
 				return ResponseEntity.status(200).body("roomie profile updated");
 
-				//TODO  this.amazonClient.delete/overwrite
 			} else {
+				// logger.info(roomieProfile.photoStruct.photoData.getClass().getSimpleName());
+				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+				roomieProfile.setPhotoURL(returnedURL);
+				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
+
 				var roomieinfo = roomieProfileRespository.save(roomieProfile);
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
 				return ResponseEntity.status(200).body("roomie profile created");
 
-				//TODO  this.amazonClient.uploadFile(file)
 			}
 		} catch(Exception e){
 			logger.info("error:",e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		} 
+	}
+
+	private void uploadFileTos3bucket(String fileName, File file) {
+
 	}
 
 	@PostMapping("/getRoomieProfile")

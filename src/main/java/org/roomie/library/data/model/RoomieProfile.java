@@ -4,6 +4,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
+import org.springframework.web.multipart.MultipartFile;
+
+
 
 @DynamoDBTable(tableName = "Roomie_Record")
 public class RoomieProfile {
@@ -11,7 +14,7 @@ public class RoomieProfile {
     private String name;
     private String gender;
     private Integer age;
-    private String nationality;
+    private String nationality; //TODO: [Yifei 2/28] --> ethnicity
     private String occupation;
     private Integer approxBudget;
     private String smoking;
@@ -19,9 +22,10 @@ public class RoomieProfile {
     private String food;
     private String riser;
 	private String sleep;
-    //private int[] photos;
     private String isPrivate;
 	private String description;
+	private String photoURL;
+	private String photoData;
 
     @DynamoDBHashKey
 	public String getEmail() {
@@ -131,13 +135,22 @@ public class RoomieProfile {
 		this.sleep = sleep;
 	}
 
-    // public int[] getPhotos() {
-	// 	return photos;
-	// }
+	@DynamoDBAttribute(attributeName = "photoURL")
+    public String getPhotoURL() {
+		return photoURL;
+	}
 
-	// public void setPhotos(int[] photos) {
-	// 	this.photos= photos;
-	// }
+	public void setPhotoURL(String photoURL) {
+		this.photoURL = photoURL;
+	}
+
+	public String getPhotoData() {
+		return photoData;
+	}
+
+	public void setPhotoData(String photoData) {
+		this.photoData = photoData;
+	}
 
 	@DynamoDBAttribute(attributeName = "isPrivate")
     public String getIsPrivate() {
@@ -174,6 +187,7 @@ public class RoomieProfile {
                 ", sleep='" + sleep + '\'' +
                 ", isPrivate='" + isPrivate + '\'' +
 				", description='" + description + '\'' +
+				", photoURL='" + photoURL + '\'' +
 				'}';
 	}
 }
