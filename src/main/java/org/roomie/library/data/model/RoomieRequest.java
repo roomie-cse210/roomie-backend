@@ -14,8 +14,8 @@ public class RoomieRequest {
     private String status;
 
 	public RoomieRequest(String requestSenderEmail, String requestReceiverEmail, String message, String status) {
-		setRequestSenderEmail(requestSenderEmail);
-		setRequestReceiverEmail(requestReceiverEmail);
+		this.setRequestSenderEmail(requestSenderEmail);
+		this.setRequestReceiverEmail(requestReceiverEmail);
 		this.message = message;
 		this.status = status;
 	}
@@ -65,8 +65,8 @@ public class RoomieRequest {
 	@Override
 	public String toString() {
 		return "RoomieRequest{" +
-                ", RequestSenderEmail='" + requestSenderEmail + '\'' +
-                ", RequestReceiverEmail='" + requestReceiverEmail + '\'' +
+                ", RequestSenderEmail='" + RoomieRequestKey.getRequestSenderEmail() + '\'' +
+                ", RequestReceiverEmail='" + RoomieRequestKey.getRequestReceiverEmail() + '\'' +
                 ", status='" + status + '\'' +
                 ", message='" + message + '\'' +
 				'}';
