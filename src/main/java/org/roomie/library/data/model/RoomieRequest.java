@@ -10,6 +10,13 @@ public class RoomieRequest {
     private String message;
     private String status;
 
+	public RoomieRequest(String requestSenderEmail, String requestReceiverEmail, String message, String status) {
+		this.requestSenderEmail = requestSenderEmail;
+		this.requestReceiverEmail = requestReceiverEmail;
+		this.message = message;
+		this.status = status;
+	}
+
 	@DynamoDBHashKey
 	public String getRequestSenderEmail() {
 		return requestSenderEmail;
