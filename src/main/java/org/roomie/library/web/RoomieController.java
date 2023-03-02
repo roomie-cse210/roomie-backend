@@ -233,7 +233,7 @@ public class RoomieController {
 	@PostMapping("/sendEmailInvite")
 	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
 			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail,
-			@RequestHeader(value = "optionalMsg") String optionalMsg) {
+			@RequestHeader(value = "message") String message) {
 		try {
 			// find sender
 			var val = roomieProfileRespository.findById(requestSenderEmail);
@@ -242,11 +242,11 @@ public class RoomieController {
 				// get sender's profile
 				RoomieProfile profile = val.get();
 				// call service
-				emailSenderService.sendEmailInvite(requestSenderEmail, requestReceiverEmail, profile.getName(), optionalMsg);
+				emailSenderService.sendEmailInvite(requestSenderEmail, requestReceiverEmail, profile.getName(), message);
 				try{
 					// save request xs
 					var roomieRequestKey = new RoomieRequestKey(requestSenderEmail, requestReceiverEmail);
-					var request = roomieRequestRepository.save(new RoomieRequest(roomieRequestKey, optionalMsg, "P"));
+					var request = roomieRequestRepository.save(new RoomieRequest(roomieRequestKey, message, "P"));
 					logger.info("Sent roomie request {} successfully", request.getRequestSenderEmail());
 				} catch(Exception e){
 					return ResponseEntity.status(500).body("Internal Server Error");
@@ -294,13 +294,26 @@ public class RoomieController {
 			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail) {
 		try {
 			// find request
-			System.out.println("Finding request");
 			var request = dynamoDbRequestService.getConnectionRequest(new RoomieRequestKey(requestSenderEmail, requestReceiverEmail));
-			System.out.println("Found!");
 			request.setStatus("R");
 			roomieRequestRepository.save(request);
 			logger.info("Reject roomie request {} successfully");
 			return ResponseEntity.status(200).body("reject Request");
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/acceptRequest")
+	public ResponseEntity<String> acceptRequest(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
+			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail) {
+		try {
+			// find request
+			var request = dynamoDbRequestService.getConnectionRequest(new RoomieRequestKey(requestSenderEmail, requestReceiverEmail));
+			request.setStatus("A");
+			roomieRequestRepository.save(request);
+			logger.info("Accept roomie request {} successfully");
+			return ResponseEntity.status(200).body("accept Request");
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
