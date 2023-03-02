@@ -15,7 +15,6 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 @EnableDynamoDBRepositories(basePackages = "org.roomie.library.data.repositories")
 public class DynamoDBConfig {
 
-
 	@Value("${amazon.dynamodb.endpoint}")
 	private String amazonDynamoDBEndpoint;
 

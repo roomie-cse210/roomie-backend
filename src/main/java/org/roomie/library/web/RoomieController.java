@@ -12,6 +12,7 @@ import org.roomie.library.data.repositories.UserFiltersRepository;
 import org.roomie.library.data.repositories.RoomieRequestRepository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
+import org.roomie.library.data.services.AmazonClient;
 import org.roomie.library.data.services.UserFiltersService;
 import org.roomie.library.data.services.DynamoDbRequestService;
 import org.slf4j.Logger;
@@ -26,7 +27,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 // import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
 import java.util.Arrays;
+import java.io.File;
 import java.util.*;
 import java.util.UUID;
 
@@ -39,7 +45,13 @@ import org.passay.PasswordGenerator;
 @RequestMapping("/api")
 public class RoomieController {
 
-	private static final Logger logger = LoggerFactory.getLogger(RoomieController.class);
+	private static final Logger logger = LoggerFactory.getLogger( RoomieController.class);
+	private AmazonClient amazonClient;
+
+	@Autowired
+    RoomieController(AmazonClient amazonClient) {
+        this.amazonClient = amazonClient;
+    }
 
 	@Autowired
 	UserInfoRepository userInfoRepository;
@@ -169,20 +181,39 @@ public class RoomieController {
 	public ResponseEntity<String> createRoomieProfile(@RequestBody RoomieProfile roomieProfile) throws Exception {
 		try {
 			var val = roomieProfileRespository.findById(roomieProfile.getEmail());
+			String uniquePhotoName = roomieProfile.getEmail();
+
 			if (val.isPresent()) {
+				//TODO  this.amazonClient.delete/overwrite	
+				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+				// TODO
+				roomieProfile.setPhotoURL(returnedURL);
+				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
+
 				roomieProfileRespository.save(roomieProfile);
 				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
 				return ResponseEntity.status(200).body("roomie profile updated");
+
 			} else {
+				// logger.info(roomieProfile.photoStruct.photoData.getClass().getSimpleName());
+				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+				roomieProfile.setPhotoURL(returnedURL);
+				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
+
 				var roomieinfo = roomieProfileRespository.save(roomieProfile);
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
 				userFiltersService.getMatchingFilterUserEmail(roomieProfile);
 				return ResponseEntity.status(200).body("roomie profile created");
+
 			}
 		} catch (Exception e) {
 			logger.info("error:", e);
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
+	}
+
+	private void uploadFileTos3bucket(String fileName, File file) {
+
 	}
 
 	@PostMapping("/getRoomieProfile")

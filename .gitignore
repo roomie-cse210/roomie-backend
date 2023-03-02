@@ -19,6 +19,13 @@ target/classes/org/roomie/library/data/model/RoomieProfileFilterRequest.class
 target/classes/org/roomie/library/data/repositories/RoomieProfileRespository.class
 .gitignore
 target/classes/org/roomie/library/data/services/DynamoDbRequestService.class
+target/classes/org/roomie/library/data/services/AmazonClient.class
+target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+target/surefire-reports/TEST-org.roomie.library.ApplicationTest.xml
+target/surefire-reports/org.roomie.library.ApplicationTest.txt
 target/classes/org/roomie/library/data/model/UserFilters.class
 target/classes/org/roomie/library/data/model/UserFiltersKey.class
 target/classes/org/roomie/library/data/repositories/UserFiltersRepository.class
