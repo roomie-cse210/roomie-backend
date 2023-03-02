@@ -25,6 +25,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+//import org.springframework.context.annotation.Bean;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +41,9 @@ import javax.annotation.PostConstruct;
 
 @Service
 public class AmazonClient {
+
+    @Value("${amazon.aws.region}")
+    private String amazonAWSRegion;
 
     @Value("${amazon.s3.endpoint}")
     private String endpointUrl;
@@ -58,7 +62,7 @@ public class AmazonClient {
     @PostConstruct
     private void initializeAmazon() {
     // Config the s3 client
-    this.s3client = AmazonS3ClientBuilder.standard()
+    this.s3client = AmazonS3ClientBuilder.standard().withEndpointConfiguration(new AmazonS3ClientBuilder.EndpointConfiguration (endpointUrl, amazonAWSRegion))
                         .withCredentials(new AWSStaticCredentialsProvider(new
                         BasicAWSCredentials(this.accessKey, this.secretKey)))
                         .build();
