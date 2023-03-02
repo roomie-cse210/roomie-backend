@@ -1,12 +1,19 @@
 package org.roomie.library.web;
+
 import org.roomie.library.data.model.RoomieProfile;
+import org.roomie.library.data.model.UserFilters;
 import org.roomie.library.data.model.RoomieProfileFilterRequest;
 import org.roomie.library.data.model.UserInfo;
+import org.roomie.library.data.model.RoomieRequest;
+import org.roomie.library.data.model.RoomieRequestKey;
 import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.repositories.RoomieProfileRespository;
+import org.roomie.library.data.repositories.UserFiltersRepository;
+import org.roomie.library.data.repositories.RoomieRequestRepository;
 import org.roomie.library.data.services.EmailSenderService;
 import org.roomie.library.data.services.SecureKeysService;
 import org.roomie.library.data.services.AmazonClient;
+import org.roomie.library.data.services.UserFiltersService;
 import org.roomie.library.data.services.DynamoDbRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +34,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.util.Arrays;
 import java.io.File;
 import java.util.*;
+import java.util.UUID;
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -52,6 +60,9 @@ public class RoomieController {
 	RoomieProfileRespository roomieProfileRespository;
 
 	@Autowired
+	RoomieRequestRepository roomieRequestRepository;
+
+	@Autowired
 	private EmailSenderService emailSenderService;
 
 	@Autowired
@@ -60,18 +71,24 @@ public class RoomieController {
 	@Autowired
 	private DynamoDbRequestService dynamoDbRequestService;
 
+	@Autowired
+	private UserFiltersRepository userFiltersRepository;
+
+	@Autowired
+	private UserFiltersService userFiltersService;
+
 	@PostMapping("/verifyUser")
 	public ResponseEntity<String> verifyUser(@RequestBody UserInfo userInfo) throws Exception {
 		userInfo = encryptPassword(userInfo);
-		try{
+		try {
 			logger.info("Checking login credentials");
 			var val = userInfoRepository.findById(userInfo.getEmail());
 			if (val.isPresent()) {
 				var uinfo = val.get();
-				if(uinfo.getPassword().equals(userInfo.getPassword())){
+				if (uinfo.getPassword().equals(userInfo.getPassword())) {
 					logger.info("Login Successful");
 					return ResponseEntity.status(200).body("login successful");
-				} else{
+				} else {
 					logger.info("Login Failed Due to Incorrect Password.");
 					return ResponseEntity.status(401).body("incorrect password");
 				}
@@ -79,7 +96,7 @@ public class RoomieController {
 				logger.info("No user found with username {}", userInfo.getEmail());
 				return ResponseEntity.status(419).body("user not found");
 			}
-		} catch(Exception e){
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
@@ -87,7 +104,7 @@ public class RoomieController {
 	@PostMapping("/createUser")
 	public ResponseEntity<String> createUser(@RequestBody UserInfo userInfo) throws Exception {
 		userInfo = encryptPassword(userInfo);
-		try{
+		try {
 			logger.info("Checking whether email is already registered");
 			var val = userInfoRepository.findById(userInfo.getEmail());
 			if (val.isPresent()) {
@@ -98,15 +115,15 @@ public class RoomieController {
 				logger.info("Created user {} successfully", uinfo.getEmail());
 				return ResponseEntity.status(200).body("user created");
 			}
-		} catch(Exception e){
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
-		} 
+		}
 	}
 
 	@PostMapping("/updateUser")
 	public ResponseEntity<String> updateUser(@RequestBody UserInfo userInfo) throws Exception {
 		userInfo = encryptPassword(userInfo);
-		try{
+		try {
 			logger.info("Checking whether email is registered");
 			var val = userInfoRepository.findById(userInfo.getEmail());
 			if (!val.isPresent()) {
@@ -117,15 +134,15 @@ public class RoomieController {
 				logger.info("Updated user {} password to {}", uinfo.getEmail(), uinfo.getPassword());
 				return ResponseEntity.status(200).body("user updated");
 			}
-		} catch(Exception e){
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
 
 	@PostMapping("/forgotPassword")
-	public ResponseEntity<String> forgotPassword(@RequestHeader(value="email") String email) {
+	public ResponseEntity<String> forgotPassword(@RequestHeader(value = "email") String email) {
 		logger.info("Checking whether email is registered");
-		try{
+		try {
 			var val = userInfoRepository.findById(email);
 
 			if (!val.isPresent()) {
@@ -137,13 +154,14 @@ public class RoomieController {
 				logger.info("Sent Forgot Password Code {} to {}", OTP, email);
 				return ResponseEntity.status(200).body(OTP);
 			}
-		} catch(Exception e){
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
+
 	@PostMapping("/emailOTP")
-	public ResponseEntity<String> emailOTP(@RequestHeader(value="email") String email) {
-		try{
+	public ResponseEntity<String> emailOTP(@RequestHeader(value = "email") String email) {
+		try {
 			logger.info("Checking whether email is already registered");
 			var val = userInfoRepository.findById(email);
 			if (val.isPresent()) {
@@ -154,14 +172,14 @@ public class RoomieController {
 			emailSenderService.sendSignupOTPEmail(email, OTP);
 			logger.info("Sent Signup Code {} to {}", OTP, email);
 			return ResponseEntity.status(200).body(OTP);
-		} catch(Exception e){
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
 
 	@PostMapping("/createRoomieProfile")
 	public ResponseEntity<String> createRoomieProfile(@RequestBody RoomieProfile roomieProfile) throws Exception {
-		try{
+		try {
 			var val = roomieProfileRespository.findById(roomieProfile.getEmail());
 			String uniquePhotoName = roomieProfile.getEmail();
 
@@ -184,13 +202,14 @@ public class RoomieController {
 
 				var roomieinfo = roomieProfileRespository.save(roomieProfile);
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
+				userFiltersService.getMatchingFilterUserEmail(roomieProfile);
 				return ResponseEntity.status(200).body("roomie profile created");
 
 			}
-		} catch(Exception e){
-			logger.info("error:",e);
+		} catch (Exception e) {
+			logger.info("error:", e);
 			return ResponseEntity.status(500).body("Internal Server Error");
-		} 
+		}
 	}
 
 	private void uploadFileTos3bucket(String fileName, File file) {
@@ -198,15 +217,15 @@ public class RoomieController {
 	}
 
 	@PostMapping("/getRoomieProfile")
-	public ResponseEntity<String> getRoomieProfile(@RequestHeader(value="email") String email) {
+	public ResponseEntity<String> getRoomieProfile(@RequestHeader(value = "email") String email) {
 		String jsonStr = new String();
-		try{
+		try {
 			jsonStr = dynamoDbRequestService.getUserProfile(email);
 			logger.info("roomie profile {} is fetched", email);
 			return ResponseEntity.status(200).body(jsonStr);
-			 
-		} catch(Exception e){
-			logger.info("error:",e);
+
+		} catch (Exception e) {
+			logger.info("error:", e);
 			jsonStr = "Internal Server Error";
 			return ResponseEntity.status(500).body(jsonStr);
 		}
@@ -215,45 +234,118 @@ public class RoomieController {
 	@PostMapping("/getAllRoomieProfiles")
 	public ResponseEntity<String> getAllRoomieProfiles() {
 		List<String> jsonStr = new ArrayList<String>();
-		try{
+		try {
 			jsonStr = dynamoDbRequestService.getAllUserProfiles();
 			logger.info("all roomie profile {} is fetched");
 			return ResponseEntity.status(200).body(jsonStr.toString());
-			 
-		} catch(Exception e){
-			logger.info("error:",e);
+
+		} catch (Exception e) {
+			logger.info("error:", e);
 			jsonStr.add("Internal Server Error");
 			return ResponseEntity.status(500).body(jsonStr.toString());
 		}
 	}
 
 	@PostMapping("/getRoomieProfilesBasedOnFilters")
-	public ResponseEntity<String> getRoomieProfilesBasedOnFilters(@RequestBody RoomieProfileFilterRequest roomieProfileFilterRequest) {
+	public ResponseEntity<String> getRoomieProfilesBasedOnFilters(
+			@RequestBody RoomieProfileFilterRequest roomieProfileFilterRequest) {
 		List<String> jsonStr = new ArrayList<String>();
-		try{
+		try {
 			jsonStr = dynamoDbRequestService.getFilteredRecords(roomieProfileFilterRequest);
 			return ResponseEntity.status(200).body(jsonStr.toString());
-			 
-		} catch(Exception e){
-			logger.info("error:",e);
+
+		} catch (Exception e) {
+			logger.info("error:", e);
 			jsonStr.add("Internal Server Error");
 			return ResponseEntity.status(500).body(jsonStr.toString());
 		}
 	}
 
 	@PostMapping("/sendEmailInvite")
-	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value="requesterEmail") String requesterEmail, @RequestHeader(value="receiverEmail") String receiverEmail) {
-		try{
-			var val = roomieProfileRespository.findById(requesterEmail);
+	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
+			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail,
+			@RequestHeader(value = "message") String message) {
+		try {
+			// find sender
+			var val = roomieProfileRespository.findById(requestSenderEmail);
+			// if sender exists
 			if (val.isPresent()) {
+				// get sender's profile
 				RoomieProfile profile = val.get();
-				emailSenderService.sendEmailInvite(requesterEmail, receiverEmail, profile.getName());
+				// call service
+				emailSenderService.sendEmailInvite(requestSenderEmail, requestReceiverEmail, profile.getName(), message);
+				try{
+					// save request xs
+					var roomieRequestKey = new RoomieRequestKey(requestSenderEmail, requestReceiverEmail);
+					var request = roomieRequestRepository.save(new RoomieRequest(roomieRequestKey, message, "P"));
+					logger.info("Sent roomie request {} successfully", request.getRequestSenderEmail());
+				} catch(Exception e){
+					return ResponseEntity.status(500).body("Internal Server Error");
+				}
 				return ResponseEntity.status(200).body("request sent");
 			} else {
-				logger.info("User {} is not registered", requesterEmail);
+				logger.info("User {} is not registered", requestSenderEmail);
 				return ResponseEntity.status(419).body("user not registered");
 			}
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/saveFilter")
+	public ResponseEntity<String> saveFilter(@RequestBody UserFilters userFilters) {
+		try{
+			userFilters.setId(UUID.randomUUID().toString());
+			var userFilter = userFiltersRepository.save(userFilters);
+			logger.info("Created user filter for user {} successfully", userFilter.getEmail());
+			return ResponseEntity.status(200).body("user filter created");
+			 
 		} catch(Exception e){
+			logger.info("error:",e);
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/createAlertOnFilter")
+	public ResponseEntity<String> createAlertOnFilter(@RequestBody UserFilters userFilters) {
+		try{
+			userFilters.setId(UUID.randomUUID().toString());
+			var userFilter = userFiltersRepository.save(userFilters);
+			logger.info("Created user filter for user {} successfully", userFilter.getEmail());
+			return ResponseEntity.status(200).body("user filter created");
+			 
+		} catch(Exception e){
+			logger.info("error:",e);
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/rejectRequest")
+	public ResponseEntity<String> rejectRequest(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
+			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail) {
+		try {
+			// find request
+			var request = dynamoDbRequestService.getConnectionRequest(new RoomieRequestKey(requestSenderEmail, requestReceiverEmail));
+			request.setStatus("R");
+			roomieRequestRepository.save(request);
+			logger.info("Reject roomie request {} successfully");
+			return ResponseEntity.status(200).body("reject Request");
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/acceptRequest")
+	public ResponseEntity<String> acceptRequest(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
+			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail) {
+		try {
+			// find request
+			var request = dynamoDbRequestService.getConnectionRequest(new RoomieRequestKey(requestSenderEmail, requestReceiverEmail));
+			request.setStatus("A");
+			roomieRequestRepository.save(request);
+			logger.info("Accept roomie request {} successfully");
+			return ResponseEntity.status(200).body("accept Request");
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
@@ -261,22 +353,22 @@ public class RoomieController {
 	@GetMapping("/")
 	public ResponseEntity<String> getAllUsers() {
 		StringBuilder sb = new StringBuilder();
-    	userInfoRepository.findAll().forEach(sb::append);
+		userInfoRepository.findAll().forEach(sb::append);
 		return ResponseEntity.ok(sb.toString());
 	}
-	
+
 	static String generateRandomOTP() {
-        List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
-    
-        PasswordGenerator generator = new PasswordGenerator();
-        String password = generator.generatePassword(5, rules);
-        return password;
-    }
+		List<CharacterRule> rules = Arrays.asList(new CharacterRule(EnglishCharacterData.Digit, 5));
+
+		PasswordGenerator generator = new PasswordGenerator();
+		String password = generator.generatePassword(5, rules);
+		return password;
+	}
 
 	private UserInfo encryptPassword(UserInfo userInfo) throws Exception {
 		String currentPass = userInfo.getPassword();
 		userInfo.setPassword(secureKeysService.hashPassword(currentPass));
 		return userInfo;
 	}
-	
+
 }

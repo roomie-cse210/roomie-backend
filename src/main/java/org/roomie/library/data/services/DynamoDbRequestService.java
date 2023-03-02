@@ -5,6 +5,8 @@ import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.model.RoomieProfileFilterRequest;
 import java.util.*;
 import org.roomie.library.data.model.RoomieProfile;
+import org.roomie.library.data.model.RoomieRequest;
+import org.roomie.library.data.model.RoomieRequestKey;
 import com.fasterxml.jackson.databind.ObjectMapper;  
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,30 @@ public class DynamoDbRequestService {
 		}
         return jsonStrList;
     }
+
+    public RoomieRequest getConnectionRequest(RoomieRequestKey roomieRequestKey){
+        List<RoomieRequest> result = new ArrayList<>();
+
+        // Create a DynamoDB scan request
+        DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
+
+        // Set filter expressions based on input parameters
+        Map<String, Condition> scanExpression = new HashMap<>();
+
+        scanExpression.put("requestSenderEmail", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieRequestKey.getRequestSenderEmail() )));
+        scanExpression.put("requestReceiverEmail", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieRequestKey.getRequestReceiverEmail() )));
+
+        // Set filter expression in scan request
+        if (!scanExpression.isEmpty()) {
+            scanExp.setScanFilter(scanExpression);
+        }
+        // Execute the scan request
+        System.out.println("Dynamo Service starts");
+        result = dynamoDBMapper.scan(RoomieRequest.class, scanExp);
+        System.out.println(result);
+        return result.get(0);
+    }
+
     private boolean allFieldsNull(RoomieProfileFilterRequest roomieProfileFilterRequest){
         if(roomieProfileFilterRequest.getGender() == null &&  
         roomieProfileFilterRequest.getMinAge() == 0 &&  
@@ -61,7 +87,7 @@ public class DynamoDbRequestService {
             return true;
         return false;
     }
-
+    
     public List<String> getFilteredRecords(RoomieProfileFilterRequest roomieProfileFilterRequest) throws Exception {
 
         List<RoomieProfile> result = new ArrayList<>();
