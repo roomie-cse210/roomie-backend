@@ -7,20 +7,22 @@ import org.springframework.data.annotation.Id;
 
 @DynamoDBTable(tableName = "Roomie_Requests")
 public class RoomieRequest {
+
     @Id
 	private RoomieRequestKey RoomieRequestKey;
 
     private String message;
     private String status;
 
-	public RoomieRequest(String requestSenderEmail, String requestReceiverEmail, String message, String status) {
-		this.setRequestSenderEmail(requestSenderEmail);
-		this.setRequestReceiverEmail(requestReceiverEmail);
+	public RoomieRequest() {};
+
+	public RoomieRequest(RoomieRequestKey roomieRequestKey, String message, String status) {
+		this.RoomieRequestKey = roomieRequestKey;
 		this.message = message;
 		this.status = status;
 	}
 
-	@DynamoDBHashKey
+	@DynamoDBHashKey(attributeName = "requestSenderEmail")
 	public String getRequestSenderEmail() {
 		return RoomieRequestKey != null ? RoomieRequestKey.getRequestSenderEmail() : null; 
 	}
@@ -32,7 +34,7 @@ public class RoomieRequest {
 		RoomieRequestKey.setRequestSenderEmail(requestSenderEmail);
 	}
 
-	@DynamoDBRangeKey
+	@DynamoDBRangeKey(attributeName = "requestReceiverEmail")
 	public String getRequestReceiverEmail() {
 		return RoomieRequestKey != null ? RoomieRequestKey.getRequestReceiverEmail() : null; 
 	}

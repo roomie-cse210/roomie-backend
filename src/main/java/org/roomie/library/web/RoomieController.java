@@ -5,6 +5,7 @@ import org.roomie.library.data.model.UserFilters;
 import org.roomie.library.data.model.RoomieProfileFilterRequest;
 import org.roomie.library.data.model.UserInfo;
 import org.roomie.library.data.model.RoomieRequest;
+import org.roomie.library.data.model.RoomieRequestKey;
 import org.roomie.library.data.repositories.UserInfoRepository;
 import org.roomie.library.data.repositories.RoomieProfileRespository;
 import org.roomie.library.data.repositories.UserFiltersRepository;
@@ -230,28 +231,29 @@ public class RoomieController {
 	}
 
 	@PostMapping("/sendEmailInvite")
-	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value = "requesterEmail") String requesterEmail,
-			@RequestHeader(value = "receiverEmail") String receiverEmail,
+	public ResponseEntity<String> sendEmailInvite(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
+			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail,
 			@RequestHeader(value = "optionalMsg") String optionalMsg) {
 		try {
 			// find sender
-			var val = roomieProfileRespository.findById(requesterEmail);
+			var val = roomieProfileRespository.findById(requestSenderEmail);
 			// if sender exists
 			if (val.isPresent()) {
 				// get sender's profile
 				RoomieProfile profile = val.get();
 				// call service
-				emailSenderService.sendEmailInvite(requesterEmail, receiverEmail, profile.getName(), optionalMsg);
+				emailSenderService.sendEmailInvite(requestSenderEmail, requestReceiverEmail, profile.getName(), optionalMsg);
 				try{
-					// save request 
-					var roomieRequest = roomieRequestRepository.save(new RoomieRequest(requesterEmail, receiverEmail, optionalMsg, "P"));
-					logger.info("Sent roomie request {} successfully", roomieRequest.getRequestSenderEmail());
+					// save request xs
+					var roomieRequestKey = new RoomieRequestKey(requestSenderEmail, requestReceiverEmail);
+					var request = roomieRequestRepository.save(new RoomieRequest(roomieRequestKey, optionalMsg, "P"));
+					logger.info("Sent roomie request {} successfully", request.getRequestSenderEmail());
 				} catch(Exception e){
 					return ResponseEntity.status(500).body("Internal Server Error");
 				}
 				return ResponseEntity.status(200).body("request sent");
 			} else {
-				logger.info("User {} is not registered", requesterEmail);
+				logger.info("User {} is not registered", requestSenderEmail);
 				return ResponseEntity.status(419).body("user not registered");
 			}
 		} catch (Exception e) {
@@ -283,6 +285,23 @@ public class RoomieController {
 			 
 		} catch(Exception e){
 			logger.info("error:",e);
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
+	@PostMapping("/rejectRequest")
+	public ResponseEntity<String> rejectRequest(@RequestHeader(value = "requestSenderEmail") String requestSenderEmail,
+			@RequestHeader(value = "requestReceiverEmail") String requestReceiverEmail) {
+		try {
+			// find request
+			System.out.println("Finding request");
+			var request = dynamoDbRequestService.getConnectionRequest(new RoomieRequestKey(requestSenderEmail, requestReceiverEmail));
+			System.out.println("Found!");
+			request.setStatus("R");
+			roomieRequestRepository.save(request);
+			logger.info("Reject roomie request {} successfully");
+			return ResponseEntity.status(200).body("reject Request");
+		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
 	}
