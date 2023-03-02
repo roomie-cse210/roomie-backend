@@ -168,6 +168,7 @@ public class RoomieController {
 			if (val.isPresent()) {
 				//TODO  this.amazonClient.delete/overwrite	
 				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+				// TODO
 				roomieProfile.setPhotoURL(returnedURL);
 				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
 
