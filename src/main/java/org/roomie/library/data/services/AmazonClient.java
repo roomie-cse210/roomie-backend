@@ -1,39 +1,19 @@
 package org.roomie.library.data.services;
 
-// import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
-// import org.springframework.web.multipart.MultipartFile;
 
-// import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
-// import com.amazonaws.AmazonServiceException;
-// import com.amazonaws.SdkClientException;
-// import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 
-// import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-// import com.amazonaws.services.s3.AmazonS3Client;
-// import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-// import com.amazonaws.services.s3.model.ListObjectsRequest;
-// import com.amazonaws.services.s3.model.ObjectListing;
-// import com.amazonaws.services.s3.model.S3ObjectSummary;
-// import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-//import org.springframework.context.annotation.Bean;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
 
-// import java.util.List;
 
 import javax.annotation.PostConstruct;
 
