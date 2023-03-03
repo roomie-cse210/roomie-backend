@@ -77,7 +77,7 @@ public class DynamoDbRequestService {
         List<RoomieRequest> userReceivedRequests = new ArrayList<>();
         List<RoomieRequest> userSentRequests = new ArrayList<>();
     
-        //get accepted connections
+        //get connections where requestSenderEmail is equal to email
         DynamoDBScanExpression scanExp1 = new DynamoDBScanExpression();
         // Set filter expressions based on input parameters
         Map<String, Condition> scanExpression1 = new HashMap<>();
@@ -89,6 +89,7 @@ public class DynamoDbRequestService {
         }
         userSentRequests = dynamoDBMapper.scan(RoomieRequest.class, scanExp1);
 
+        //get connections where requestRequesterEmail is equal to email
         DynamoDBScanExpression scanExp2 = new DynamoDBScanExpression();
         // Set filter expressions based on input parameters
         Map<String, Condition> scanExpression2 = new HashMap<>();
@@ -104,8 +105,9 @@ public class DynamoDbRequestService {
         List<RoomieRequest> allconnections= new ArrayList<>();
         Stream.of(userReceivedRequests, userSentRequests).forEach(allconnections::addAll);
 
+        // separate all connections into accepted connections/sent request/received requests
+        // AND collect each user email
         ObjectMapper mapper = new ObjectMapper(); 
-
         List<String> connections = new ArrayList<>(); //(S=email or R= email) and status=A
         List<String> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
         List<String> receivedRequests = new ArrayList<>(); // R=email and status=P)
@@ -114,7 +116,7 @@ public class DynamoDbRequestService {
             String status = conn.getStatus();
             String senderEmail = conn.getRequestSenderEmail();
             String receiverEmail = conn.getRequestReceiverEmail();
-
+            // separate
             if (status.equals("A")){
                 try{
                     connections.add(mapper.writeValueAsString(conn));
@@ -134,7 +136,7 @@ public class DynamoDbRequestService {
                     System.out.println(except);
                 }
             }
-
+            // add to userEmails
             if (!senderEmail.equals(email)){
                 userEmails.add(senderEmail);
             }
