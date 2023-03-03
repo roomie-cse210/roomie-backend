@@ -108,9 +108,9 @@ public class DynamoDbRequestService {
         // separate all connections into accepted connections/sent request/received requests
         // AND collect each user email
         ObjectMapper mapper = new ObjectMapper(); 
-        List<String> connections = new ArrayList<>(); //(S=email or R= email) and status=A
-        List<String> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
-        List<String> receivedRequests = new ArrayList<>(); // R=email and status=P)
+        List<RoomieRequest> connections = new ArrayList<>(); //(S=email or R= email) and status=A
+        List<RoomieRequest> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
+        List<RoomieRequest> receivedRequests = new ArrayList<>(); // R=email and status=P)
         List<String> userEmails = new ArrayList<>();
         for (RoomieRequest conn : allconnections){
             String status = conn.getStatus();
@@ -118,23 +118,11 @@ public class DynamoDbRequestService {
             String receiverEmail = conn.getRequestReceiverEmail();
             // separate
             if (status.equals("A")){
-                try{
-                    connections.add(mapper.writeValueAsString(conn));
-                }catch (Exception except) {
-                    System.out.println(except);
-                }
+                connections.add(conn);
             }else if (senderEmail.equals(email)){
-                try{
-                    sentRequests.add(mapper.writeValueAsString(conn));
-                }catch (Exception except) {
-                    System.out.println(except);
-                }
+                sentRequests.add(conn);
             }else{
-                try{
-                    receivedRequests.add(mapper.writeValueAsString(conn));
-                }catch (Exception except) {
-                    System.out.println(except);
-                }
+                receivedRequests.add(conn);
             }
             // add to userEmails
             if (!senderEmail.equals(email)){
@@ -146,11 +134,11 @@ public class DynamoDbRequestService {
         }
 
         // get user profile
-        Map<String, String> userProfiles = new HashMap<>();
-        for (String e : userEmails){
-            var profile = roomieProfileRespository.findById(e);
+        Map<String, RoomieProfile> userProfiles = new HashMap<>();
+        for (String em : userEmails){
+            var profile = roomieProfileRespository.findById(em);
             try{
-                userProfiles.put(e, mapper.writeValueAsString(profile.get()));
+                userProfiles.put(em, profile.get());
             }catch (Exception except) {
                 System.out.println(except);
             }
@@ -161,7 +149,7 @@ public class DynamoDbRequestService {
         result.put("allConnections", connections);
         result.put("receivedRequests", receivedRequests);
         result.put("sentRequests", sentRequests);
-    
+
         return result;
     }
 
