@@ -10,6 +10,7 @@ import org.roomie.library.data.model.RoomieRequestKey;
 import com.fasterxml.jackson.databind.ObjectMapper;  
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
@@ -69,6 +70,97 @@ public class DynamoDbRequestService {
         result = dynamoDBMapper.scan(RoomieRequest.class, scanExp);
         System.out.println(result);
         return result.get(0);
+    }
+
+    public Map<String, Object> getConnections(String email){
+        Map<String, Object> result = new HashMap<>();
+        List<RoomieRequest> userReceivedRequests = new ArrayList<>();
+        List<RoomieRequest> userSentRequests = new ArrayList<>();
+    
+        //get accepted connections
+        DynamoDBScanExpression scanExp1 = new DynamoDBScanExpression();
+        // Set filter expressions based on input parameters
+        Map<String, Condition> scanExpression1 = new HashMap<>();
+        scanExpression1.put("requestSenderEmail", new Condition()
+                    .withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(email)));
+        // Set filter expression in scan request
+        if (!scanExpression1.isEmpty()) {
+            scanExp1.setScanFilter(scanExpression1);
+        }
+        userSentRequests = dynamoDBMapper.scan(RoomieRequest.class, scanExp1);
+
+        DynamoDBScanExpression scanExp2 = new DynamoDBScanExpression();
+        // Set filter expressions based on input parameters
+        Map<String, Condition> scanExpression2 = new HashMap<>();
+        scanExpression2.put("requestReceiverEmail", new Condition()
+                    .withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(email)));
+        // Set filter expression in scan request
+        if (!scanExpression2.isEmpty()) {
+            scanExp2.setScanFilter(scanExpression2);
+        }
+        userReceivedRequests = dynamoDBMapper.scan(RoomieRequest.class, scanExp2);
+
+        // join all connections
+        List<RoomieRequest> allconnections= new ArrayList<>();
+        Stream.of(userReceivedRequests, userSentRequests).forEach(allconnections::addAll);
+
+        ObjectMapper mapper = new ObjectMapper(); 
+
+        List<String> connections = new ArrayList<>(); //(S=email or R= email) and status=A
+        List<String> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
+        List<String> receivedRequests = new ArrayList<>(); // R=email and status=P)
+        List<String> userEmails = new ArrayList<>();
+        for (RoomieRequest conn : allconnections){
+            String status = conn.getStatus();
+            String senderEmail = conn.getRequestSenderEmail();
+            String receiverEmail = conn.getRequestReceiverEmail();
+
+            if (status.equals("A")){
+                try{
+                    connections.add(mapper.writeValueAsString(conn));
+                }catch (Exception except) {
+                    System.out.println(except);
+                }
+            }else if (senderEmail.equals(email)){
+                try{
+                    sentRequests.add(mapper.writeValueAsString(conn));
+                }catch (Exception except) {
+                    System.out.println(except);
+                }
+            }else{
+                try{
+                    receivedRequests.add(mapper.writeValueAsString(conn));
+                }catch (Exception except) {
+                    System.out.println(except);
+                }
+            }
+
+            if (!senderEmail.equals(email)){
+                userEmails.add(senderEmail);
+            }
+            if (!receiverEmail.equals(email)){
+                userEmails.add(receiverEmail);
+            }
+        }
+
+        // get user profile
+        Map<String, String> userProfiles = new HashMap<>();
+        for (String e : userEmails){
+            var profile = roomieProfileRespository.findById(e);
+            try{
+                userProfiles.put(e, mapper.writeValueAsString(profile.get()));
+            }catch (Exception except) {
+                System.out.println(except);
+            }
+        }
+        
+        // result
+        result.put("userProfiles", userProfiles);
+        result.put("allConnections", connections);
+        result.put("receivedRequests", receivedRequests);
+        result.put("sentRequests", sentRequests);
+    
+        return result;
     }
 
     private boolean allFieldsNull(RoomieProfileFilterRequest roomieProfileFilterRequest){
