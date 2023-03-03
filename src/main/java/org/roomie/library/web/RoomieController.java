@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 // import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.io.File;
 import java.util.*;
 import java.util.UUID;
+import com.fasterxml.jackson.databind.ObjectMapper;  
 
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -351,15 +353,14 @@ public class RoomieController {
 	}
 
 	@PostMapping("/getConnections")
+	@ResponseBody
 	public ResponseEntity<String> getConnections(@RequestHeader(value = "email") String email) {
 		try {
 			Map<String, Object> result;
-			System.out.println("start getting connections");
 			result = dynamoDbRequestService.getConnections(email);
-			System.out.println("got it!");
-			System.out.println(result);
-			logger.info("get roomie connections and requests {} successfully");
-			return ResponseEntity.status(200).body(result.toString());
+			logger.info("get roomie connections of user successfully");
+			String jsonStr=new ObjectMapper().writeValueAsString(result);
+			return ResponseEntity.status(200).body(jsonStr);
 		} catch (Exception e) {
 			return ResponseEntity.status(500).body("Internal Server Error");
 		}
