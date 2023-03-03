@@ -350,6 +350,21 @@ public class RoomieController {
 		}
 	}
 
+	@PostMapping("/getConnections")
+	public ResponseEntity<String> getConnections(@RequestHeader(value = "email") String email) {
+		try {
+			Map<String, Object> result;
+			System.out.println("start getting connections");
+			result = dynamoDbRequestService.getConnections(email);
+			System.out.println("got it!");
+			System.out.println(result);
+			logger.info("get roomie connections and requests {} successfully");
+			return ResponseEntity.status(200).body(result.toString());
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("Internal Server Error");
+		}
+	}
+
 	@GetMapping("/")
 	public ResponseEntity<String> getAllUsers() {
 		StringBuilder sb = new StringBuilder();
