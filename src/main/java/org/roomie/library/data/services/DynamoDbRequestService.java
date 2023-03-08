@@ -107,7 +107,6 @@ public class DynamoDbRequestService {
 
         // separate all connections into accepted connections/sent request/received requests
         // AND collect each user email
-        ObjectMapper mapper = new ObjectMapper(); 
         List<RoomieRequest> connections = new ArrayList<>(); //(S=email or R= email) and status=A
         List<RoomieRequest> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
         List<RoomieRequest> receivedRequests = new ArrayList<>(); // R=email and status=P)
