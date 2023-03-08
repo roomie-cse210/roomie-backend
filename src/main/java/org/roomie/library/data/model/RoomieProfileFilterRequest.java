@@ -46,19 +46,19 @@ public class RoomieProfileFilterRequest {
 		else if(ageCategory == 2)
 			return 25;
 		else if(ageCategory == 3)
-			return 35;
-		return 45;
+			return 36;
+		return 46;
 	}
 
 	public Integer getMaxAge() {
 		if(ageCategory == null)
 			return 1000;
 		if(ageCategory == 1)
-			return 25;
+			return 24;
 		else if(ageCategory == 2)
 			return 35;
 		else if(ageCategory == 3)
-			return 45;
+			return 35;
 		return 20000;
 	}
 

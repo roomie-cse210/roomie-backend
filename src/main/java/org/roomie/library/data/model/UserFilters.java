@@ -10,21 +10,18 @@ import org.springframework.data.annotation.Id;
 public class UserFilters {
 	@Id
 	private UserFiltersKey userFiltersKey;
-
-    private String name;
+	
     private String gender;
     private Integer age;
     private String nationality;
     private String occupation;
-    private Integer approxBudget;
+    private Integer minBudget;
+	private Integer maxBudget;
     private String smoking;
     private String pets;
     private String food;
     private String riser;
 	private String sleep;
-    //private int[] photos;
-    private String isPrivate;
-	private String description;
 
     @DynamoDBHashKey
 	public String getEmail() {
@@ -49,16 +46,6 @@ public class UserFilters {
 		}
 		userFiltersKey.setId(id);
 	}
-
-    @DynamoDBAttribute
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 
 	@DynamoDBAttribute(attributeName = "gender")
     public String getGender() {
@@ -96,13 +83,22 @@ public class UserFilters {
 		this.occupation= occupation;
 	}
 
-	@DynamoDBAttribute(attributeName = "approxBudget")
-    public Integer getApproxBudget() {
-		return approxBudget;
+	@DynamoDBAttribute(attributeName = "minBudget")
+    public Integer getMinBudget() {
+		return minBudget;
 	}
 
-	public void setApproxBudget(Integer approxBudget) {
-		this.approxBudget = approxBudget;
+	public void setMaxBudget(Integer maxBudget) {
+		this.maxBudget = maxBudget;
+	}
+
+	@DynamoDBAttribute(attributeName = "maxBudget")
+    public Integer getMaxBudget() {
+		return maxBudget;
+	}
+
+	public void setMinBudget(Integer minBudget) {
+		this.minBudget = minBudget;
 	}
 
 	@DynamoDBAttribute(attributeName = "smoking")
@@ -158,42 +154,22 @@ public class UserFilters {
 	// 	this.photos= photos;
 	// }
 
-	@DynamoDBAttribute(attributeName = "isPrivate")
-    public String getIsPrivate() {
-		return isPrivate;
-	}
-
-	public void setIsPrivate(String isPrivate) {
-		this.isPrivate= isPrivate;
-	}
-
-	@DynamoDBAttribute(attributeName = "description")
-    public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description= description;
-	}
-
 	@Override
 	public String toString() {
 		return "UserInfo{" +
 				", id='" + getId() + '\'' + 
 				", email='" + getEmail() + '\'' +
-                ", name='" + name + '\'' +
                 ", gender='" + gender + '\'' +
                 ", age='" + age + '\'' +
                 ", nationality='" + nationality + '\'' +
                 ", occupation='" + occupation + '\'' +
-                ", (approxBudget)='" + approxBudget + '\'' +
+                ", (minBudget)='" + minBudget + '\'' +
+				", (maxBudget)='" + maxBudget + '\'' +
                 ", smoking='" + smoking + '\'' +
                 ", pets='" + pets + '\'' +
                 ", foods='" + food + '\'' +
 				", riser='" + riser + '\'' +
                 ", sleep='" + sleep + '\'' +
-                ", isPrivate='" + isPrivate + '\'' +
-				", description='" + description + '\'' +
 				'}';
 	}
 }
