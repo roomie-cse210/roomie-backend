@@ -234,10 +234,10 @@ public class RoomieController {
 	}
 
 	@PostMapping("/getAllRoomieProfiles")
-	public ResponseEntity<String> getAllRoomieProfiles() {
+	public ResponseEntity<String> getAllRoomieProfiles(@RequestHeader(value = "email") String email) {
 		List<String> jsonStr = new ArrayList<String>();
 		try {
-			jsonStr = dynamoDbRequestService.getAllUserProfiles();
+			jsonStr = dynamoDbRequestService.getAllUserProfiles(email);
 			logger.info("all roomie profile {} is fetched");
 			return ResponseEntity.status(200).body(jsonStr.toString());
 
