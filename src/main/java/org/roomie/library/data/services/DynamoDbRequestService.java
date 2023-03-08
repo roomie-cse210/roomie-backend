@@ -37,10 +37,11 @@ public class DynamoDbRequestService {
         return jsonStr;
     }
 
-    public List<String> getAllUserProfiles() throws Exception {
+    public List<String> getAllUserProfiles(String email) throws Exception {
+        // get all User Profiles
         List<RoomieProfile> profiles = new ArrayList<RoomieProfile>();
         roomieProfileRespository.findAll().forEach(profiles::add);
-        
+
         List<String> jsonStrList = new ArrayList<String>();
         for(int i =0; i<profiles.size(); i++){
 			ObjectMapper mapper = new ObjectMapper();  
@@ -49,31 +50,7 @@ public class DynamoDbRequestService {
         return jsonStrList;
     }
 
-    public RoomieRequest getConnectionRequest(RoomieRequestKey roomieRequestKey){
-        List<RoomieRequest> result = new ArrayList<>();
-
-        // Create a DynamoDB scan request
-        DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
-
-        // Set filter expressions based on input parameters
-        Map<String, Condition> scanExpression = new HashMap<>();
-
-        scanExpression.put("requestSenderEmail", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieRequestKey.getRequestSenderEmail() )));
-        scanExpression.put("requestReceiverEmail", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieRequestKey.getRequestReceiverEmail() )));
-
-        // Set filter expression in scan request
-        if (!scanExpression.isEmpty()) {
-            scanExp.setScanFilter(scanExpression);
-        }
-        // Execute the scan request
-        System.out.println("Dynamo Service starts");
-        result = dynamoDBMapper.scan(RoomieRequest.class, scanExp);
-        System.out.println(result);
-        return result.get(0);
-    }
-
-    public Map<String, Object> getConnections(String email){
-        Map<String, Object> result = new HashMap<>();
+    public List<RoomieRequest> findConnectionsQuery(String email){
         List<RoomieRequest> userReceivedRequests = new ArrayList<>();
         List<RoomieRequest> userSentRequests = new ArrayList<>();
     
@@ -105,13 +82,44 @@ public class DynamoDbRequestService {
         List<RoomieRequest> allconnections= new ArrayList<>();
         Stream.of(userReceivedRequests, userSentRequests).forEach(allconnections::addAll);
 
+        return allconnections;
+    }
+
+    public RoomieRequest getConnectionRequest(RoomieRequestKey roomieRequestKey){
+        List<RoomieRequest> result = new ArrayList<>();
+
+        // Create a DynamoDB scan request
+        DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
+
+        // Set filter expressions based on input parameters
+        Map<String, Condition> scanExpression = new HashMap<>();
+
+        scanExpression.put("requestSenderEmail", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieRequestKey.getRequestSenderEmail() )));
+        scanExpression.put("requestReceiverEmail", new Condition().withComparisonOperator(ComparisonOperator.EQ).withAttributeValueList(new AttributeValue(roomieRequestKey.getRequestReceiverEmail() )));
+
+        // Set filter expression in scan request
+        if (!scanExpression.isEmpty()) {
+            scanExp.setScanFilter(scanExpression);
+        }
+        // Execute the scan request
+        System.out.println("Dynamo Service starts");
+        result = dynamoDBMapper.scan(RoomieRequest.class, scanExp);
+        System.out.println(result);
+        return result.get(0);
+    }
+
+    public Map<String, Object> getConnections(String email){
+        Map<String, Object> result = new HashMap<>();
+        List<RoomieRequest> allConnections = new ArrayList<>();
+        allConnections = findConnectionsQuery(email);
+
         // separate all connections into accepted connections/sent request/received requests
         // AND collect each user email
         List<RoomieRequest> connections = new ArrayList<>(); //(S=email or R= email) and status=A
         List<RoomieRequest> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
         List<RoomieRequest> receivedRequests = new ArrayList<>(); // R=email and status=P)
         List<String> userEmails = new ArrayList<>();
-        for (RoomieRequest conn : allconnections){
+        for (RoomieRequest conn : allConnections){
             String status = conn.getStatus();
             String senderEmail = conn.getRequestSenderEmail();
             String receiverEmail = conn.getRequestReceiverEmail();
@@ -230,7 +238,31 @@ public class DynamoDbRequestService {
         // Execute the scan request
         result = dynamoDBMapper.scan(RoomieProfile.class, scanExp);
 
-        return convertJavaObjectToJSON(result);
+         // get interacted users with current user
+         List<RoomieRequest> allConnections = new ArrayList<>();
+         String userEmail = roomieProfileFilterRequest.getEmail();
+         allConnections = findConnectionsQuery(userEmail);
+         List<String> connectedEmails = new ArrayList<>();
+         for (RoomieRequest conn : allConnections){
+             String senderEmail = conn.getRequestSenderEmail();
+             String receiverEmail = conn.getRequestReceiverEmail();
+             if (senderEmail.equals(userEmail)){
+                 connectedEmails.add(receiverEmail);
+             }else if (receiverEmail.equals(userEmail)){
+                 connectedEmails.add(senderEmail);
+             } 
+         }
+ 
+         // remove profiles of interacted users
+         List<RoomieProfile> new_profiles = new ArrayList<RoomieProfile>();
+         for (RoomieProfile profile : result){
+             String profile_email = profile.getEmail();
+             if (!connectedEmails.contains(profile_email)){
+                 new_profiles.add(profile);
+             }
+         }
+
+        return convertJavaObjectToJSON(new_profiles);
     }
     
     private List<String> convertJavaObjectToJSON(List<RoomieProfile> obj) throws Exception {
