@@ -40,7 +40,7 @@ public class DynamoDbRequestService {
     public List<String> getAllUserProfiles() throws Exception {
         List<RoomieProfile> profiles = new ArrayList<RoomieProfile>();
         roomieProfileRespository.findAll().forEach(profiles::add);
-
+        
         List<String> jsonStrList = new ArrayList<String>();
         for(int i =0; i<profiles.size(); i++){
 			ObjectMapper mapper = new ObjectMapper();  
@@ -107,7 +107,6 @@ public class DynamoDbRequestService {
 
         // separate all connections into accepted connections/sent request/received requests
         // AND collect each user email
-        ObjectMapper mapper = new ObjectMapper(); 
         List<RoomieRequest> connections = new ArrayList<>(); //(S=email or R= email) and status=A
         List<RoomieRequest> sentRequests = new ArrayList<>(); // S=email and (status=R or status=P)
         List<RoomieRequest> receivedRequests = new ArrayList<>(); // R=email and status=P)
@@ -122,7 +121,9 @@ public class DynamoDbRequestService {
             }else if (senderEmail.equals(email)){
                 sentRequests.add(conn);
             }else{
-                receivedRequests.add(conn);
+                if (status.equals("P")){
+                    receivedRequests.add(conn);
+                }
             }
             // add to userEmails
             if (!senderEmail.equals(email)){

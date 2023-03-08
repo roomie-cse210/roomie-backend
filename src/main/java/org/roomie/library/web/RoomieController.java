@@ -353,7 +353,6 @@ public class RoomieController {
 	}
 
 	@PostMapping("/getConnections")
-	@ResponseBody
 	public ResponseEntity<String> getConnections(@RequestHeader(value = "email") String email) {
 		try {
 			Map<String, Object> result;
