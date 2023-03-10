@@ -182,14 +182,16 @@ public class RoomieController {
 
 			if (val.isPresent()) {
 				var userProfile = roomieProfileRespository.findById(roomieProfile.getEmail()).get();
-				String oldPhotoURL = userProfile.getPhotoURL();
-				this.amazonClient.deleteFile(oldPhotoURL);
-				logger.info("profile photo {} is deleted", oldPhotoURL);
+				// Make update photo optional
+                		if (roomieProfile.getPhotoData() != null) {
+					String oldPhotoURL = userProfile.getPhotoURL();
+					this.amazonClient.deleteFile(oldPhotoURL);
+					logger.info("profile photo {} is deleted", oldPhotoURL);
 
-				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
-				roomieProfile.setPhotoURL(returnedURL);
-				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
-
+					String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+					roomieProfile.setPhotoURL(returnedURL);
+					logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
+				}
 				roomieProfileRespository.save(roomieProfile);
 				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
 				return ResponseEntity.status(200).body("roomie profile updated");
