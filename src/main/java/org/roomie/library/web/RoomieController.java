@@ -25,15 +25,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-// import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import java.util.Arrays;
-import java.io.File;
 import java.util.*;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;  
@@ -186,9 +181,12 @@ public class RoomieController {
 			String uniquePhotoName = roomieProfile.getEmail();
 
 			if (val.isPresent()) {
-				//TODO  this.amazonClient.delete/overwrite	
+				var userProfile = roomieProfileRespository.findById(roomieProfile.getEmail()).get();
+				String oldPhotoURL = userProfile.getPhotoURL();
+				this.amazonClient.deleteFile(oldPhotoURL);
+				logger.info("profile photo {} is deleted", oldPhotoURL);
+
 				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
-				// TODO
 				roomieProfile.setPhotoURL(returnedURL);
 				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
 
@@ -214,10 +212,6 @@ public class RoomieController {
 		}
 	}
 
-	private void uploadFileTos3bucket(String fileName, File file) {
-
-	}
-
 	@PostMapping("/getRoomieProfile")
 	public ResponseEntity<String> getRoomieProfile(@RequestHeader(value = "email") String email) {
 		String jsonStr = new String();
@@ -238,6 +232,7 @@ public class RoomieController {
 		List<String> jsonStr = new ArrayList<String>();
 		try {
 			jsonStr = dynamoDbRequestService.getAllUserProfiles(email);
+
 			logger.info("all roomie profile {} is fetched");
 			return ResponseEntity.status(200).body(jsonStr.toString());
 

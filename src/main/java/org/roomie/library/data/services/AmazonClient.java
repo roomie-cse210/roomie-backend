@@ -8,10 +8,12 @@ import com.amazonaws.auth.BasicAWSCredentials;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 
 
@@ -66,7 +68,8 @@ public class AmazonClient {
     }
 
     public String uploadFile(String base64Image, String fileName) {
-        String fileNameAppendix = fileName + ".JPG";
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+        String fileNameAppendix = fileName + "-" + timeStamp + ".JPG";
         String fileURL = "";
         try {
             uploadFileTos3bucket(fileNameAppendix, base64Image);
@@ -75,5 +78,11 @@ public class AmazonClient {
            e.printStackTrace();
         }
         return fileURL;
+    }
+
+    public void deleteFile(String fileURL) {
+        String[] parts = fileURL.split("/");
+        String keyName = parts[parts.length-1]; 
+        s3client.deleteObject(new DeleteObjectRequest(bucketName, keyName));
     }
 }

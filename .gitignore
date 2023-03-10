@@ -34,3 +34,4 @@ target/classes/org/roomie/library/data/model/RoomieRequest.class
 target/classes/org/roomie/library/data/repositories/RoomieRequestRepository.class
 target/classes/org/roomie/library/data/model/RoomieRequestKey.class
 src/main/resources/application.properties
+src/main/.DS_Store
