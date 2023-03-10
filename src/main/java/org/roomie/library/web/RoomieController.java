@@ -181,6 +181,8 @@ public class RoomieController {
 			String uniquePhotoName = roomieProfile.getEmail();
 
 			if (val.isPresent()) {
+				      // Make update photo optional
+					  if (roomieProfile.getPhotoData() != null) {
 				var userProfile = roomieProfileRespository.findById(roomieProfile.getEmail()).get();
 				String oldPhotoURL = userProfile.getPhotoURL();
 				this.amazonClient.deleteFile(oldPhotoURL);
@@ -189,6 +191,7 @@ public class RoomieController {
 				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
 				roomieProfile.setPhotoURL(returnedURL);
 				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
+					  }
 
 				roomieProfileRespository.save(roomieProfile);
 				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
