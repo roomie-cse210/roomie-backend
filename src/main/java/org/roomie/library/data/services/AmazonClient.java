@@ -81,8 +81,11 @@ public class AmazonClient {
     }
 
     public void deleteFile(String fileURL) {
-        String[] parts = fileURL.split("/");
-        String keyName = parts[parts.length-1]; 
-        s3client.deleteObject(new DeleteObjectRequest(bucketName, keyName));
+        if (fileURL != null) {
+            String[] parts = fileURL.split("/");
+            String keyName = parts[parts.length-1]; 
+            s3client.deleteObject(new DeleteObjectRequest(bucketName, keyName));
+        }
+
     }
 }
