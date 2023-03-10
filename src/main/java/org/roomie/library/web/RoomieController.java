@@ -186,16 +186,17 @@ public class RoomieController {
 			String uniquePhotoName = roomieProfile.getEmail();
 
 			if (val.isPresent()) {
-				//TODO  this.amazonClient.delete/overwrite	
-				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
-				// TODO
-				roomieProfile.setPhotoURL(returnedURL);
-				logger.info("profile photo {} is rendered", roomieProfile.getPhotoURL());
-
+				// Make update photo optional
+				if (roomieProfile.getPhotoData() != null) {
+					//TODO  this.amazonClient.delete/overwrite	
+					String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
+					// TODO
+					roomieProfile.setPhotoURL(returnedURL);
+					logger.info("why profile photo {} is rendered", roomieProfile.getPhotoURL());
+				}
 				roomieProfileRespository.save(roomieProfile);
 				logger.info("roomie profile {} is updated", roomieProfile.getEmail());
 				return ResponseEntity.status(200).body("roomie profile updated");
-
 			} else {
 				// logger.info(roomieProfile.photoStruct.photoData.getClass().getSimpleName());
 				String returnedURL = this.amazonClient.uploadFile(roomieProfile.getPhotoData(), uniquePhotoName);
@@ -206,7 +207,6 @@ public class RoomieController {
 				logger.info("Created roomie profile {} successfully", roomieinfo.getEmail());
 				userFiltersService.getMatchingFilterUserEmail(roomieProfile);
 				return ResponseEntity.status(200).body("roomie profile created");
-
 			}
 		} catch (Exception e) {
 			logger.info("error:", e);
